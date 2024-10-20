@@ -1,18 +1,20 @@
-import './index.css'; 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home'; 
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import Home from './pages/Home';
+import TestPage from './pages/TestPage';
 
 const App = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </Router>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/home" element={<Home />} />
+                <Route path="/test" element={<TestPage />} />
+            </Routes>
+        </BrowserRouter>
+    );
 };
 
 export default App;
+
 
 
