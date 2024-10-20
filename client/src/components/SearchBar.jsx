@@ -15,7 +15,7 @@ const SearchBar = ({ onSearch }) => {
                 placeholder="Buscar Ingredientes"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-grow p-3 border border-brown rounded-l-md bg-white focus:outline-none focus:ring-2 focus:ring-brown"
+                className="flex-grow p-3 border-2 border-brown rounded-l-md bg-white focus:outline-none focus:ring-2 focus:ring-brown"
             />
             <button 
                 onClick={handleSearch} 
