@@ -9,7 +9,6 @@ import RecipeDetails from "./pages/RecipeDetails";
 
 const App = () => {
     return (
-        console.log("hola")
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<Home />} />
