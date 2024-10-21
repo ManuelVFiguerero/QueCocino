@@ -5,15 +5,17 @@ import TestPage from './pages/TestPage';
 import RegisterUser from './pages/RegisterUser';
 import LoginUser from './pages/LoginUser';
 import RecoverPassword from './pages/RecoverPassword';
+import RecipeDetails from "./pages/RecipeDetails";
 
 const App = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/home" element={<Home />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/test" element={<TestPage />} />
                 <Route path="/register" element={<RegisterUser />} />
                 <Route path="/login" element={<LoginUser />} /> 
+                <Route path="/recipedetails" element={<RecipeDetails />} /> 
                 <Route path="/RecoverPassword" element={<RecoverPassword />} /> 
             </Routes>
         </BrowserRouter>

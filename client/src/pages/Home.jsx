@@ -6,8 +6,38 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFire, faFlag, faBan } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
+    const recetas = [
+        {
+            tituloReceta: "Pasta de Almendra",
+            autor: "Chef Juan",
+            ingredientes: ["Fideos", "Pollo", "Carne", "Tomate"],
+            descripcion: "Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.",
+            restricciones: ["Apto vegano", "Apto celiaco"],
+            instrucciones: "Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.",
+            image: "https://cdn.nutritionstudies.org/wp-content/uploads/2015/07/almond-noodles-3-1024x683.jpg"
+        },
+        {
+            tituloReceta: "Pizza Margherita",
+            autor: "Chef María",
+            ingredientes: ["Masa", "Tomate", "Queso", "Albahaca"],
+            descripcion: "Una clásica pizza italiana con tomate fresco y albahaca.",
+            restricciones: ["Apto vegetariano"],
+            instrucciones: "Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.",
+            image: "https://www.paulinacocina.net/wp-content/uploads/2023/09/pizza-margherita-paulina-cocina-recetas-1200x675.jpg"
+        },
+        {
+            tituloReceta: "Tarta de Manzana",
+            autor: "Chef Ana",
+            ingredientes: ["Manzanas", "Azúcar", "Harina", "Mantequilla"],
+            descripcion: "Deliciosa tarta de manzana, perfecta para el postre.",
+            restricciones: ["Apto celíaco"],
+            instrucciones: "Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.Esta es una deliciosa receta de pasta de almendra que te encantará. Sencilla y rápida de preparar.",
+            image: "https://www.elespectador.com/resizer/KoyF5-32Hp0bWZzSmgWJhG1XkwE=/arc-anglerfish-arc2-prod-elespectador/public/KRMQHXYYBFBI5KRDXUYY5AXH2A.jpg"
+        }
+    ];
+
     return (
-        <div className="flex flex-col items-center bg-gradient-to-b from-brown-100 to-brown-600 p-4"> {/* Ajusta los colores aquí */}
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200">  {/* Ajusta los colores aquí */}
             <img src={logo} alt="Logo Que Cocino" className="w-32 mb-4" />
             <h1 className="text-4xl font-bold text-brown-600 mb-4">Buscar Recetas</h1>
             <SearchBar onSearch={() => {}} />
@@ -20,9 +50,9 @@ const Home = () => {
                     Recetas de la Semana
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <RecipeCard recipe={{ title: 'Receta 1', description: 'Descripción de la receta 1' }} />
-                    <RecipeCard recipe={{ title: 'Receta 2', description: 'Descripción de la receta 2' }} />
-                    <RecipeCard recipe={{ title: 'Receta 3', description: 'Descripción de la receta 3' }} />
+                    <RecipeCard recipe={recetas[0]} />
+                    <RecipeCard recipe={recetas[1]} />
+                    <RecipeCard recipe={recetas[2]} />
                 </div>
             </div>
 
@@ -33,9 +63,9 @@ const Home = () => {
                     Recetas Argentinas
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <RecipeCard recipe={{ title: 'Receta Argentina 1', description: 'Descripción de la receta argentina 1' }} />
-                    <RecipeCard recipe={{ title: 'Receta Argentina 2', description: 'Descripción de la receta argentina 2' }} />
-                    <RecipeCard recipe={{ title: 'Receta Argentina 3', description: 'Descripción de la receta argentina 3' }} />
+                    <RecipeCard recipe={recetas[0]} />
+                    <RecipeCard recipe={recetas[1]} />
+                    <RecipeCard recipe={recetas[2]} />
                 </div>
             </div>
 
@@ -46,9 +76,9 @@ const Home = () => {
                     Recetas Celíacas
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <RecipeCard recipe={{ title: 'Receta Celíaca 1', description: 'Descripción de la receta celíaca 1' }} />
-                    <RecipeCard recipe={{ title: 'Receta Celíaca 2', description: 'Descripción de la receta celíaca 2' }} />
-                    <RecipeCard recipe={{ title: 'Receta Celíaca 3', description: 'Descripción de la receta celíaca 3' }} />
+                    <RecipeCard recipe={recetas[0]} />
+                    <RecipeCard recipe={recetas[1]} />
+                    <RecipeCard recipe={recetas[2]} />
                 </div>
             </div>
         </div>

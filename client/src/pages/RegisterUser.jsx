@@ -12,7 +12,7 @@ const RegisterUser = () => {
     const [confirmarContrasena, setConfirmarContrasena] = useState('');
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-brown-100 to-brown-600 p-4">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200"> 
             <img src={logo} alt="Logo Que Cocino" className="w-32 mb-4" />
             <h1 className="text-4xl font-bold text-brown mb-4">Registrarse</h1>
             <div className="flex space-x-4 mb-4 w-full max-w-lg">
