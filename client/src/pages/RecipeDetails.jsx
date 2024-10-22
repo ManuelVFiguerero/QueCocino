@@ -1,5 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons'; // Importa faBars
+import logo from '../assets/logo.png'; // Importa el logo
 
 const RecipeDetails = () => {
     const location = useLocation(); // Acceder a la ubicación actual
@@ -12,6 +15,16 @@ const RecipeDetails = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200"> 
+            {/* Logo en la esquina superior izquierda */}
+            <div className="absolute top-4 left-4">
+                <img src={logo} alt="Logo" className="w-16 h-16" />
+            </div>
+
+            {/* Menú hamburguesa en la esquina superior derecha */}
+            <div className="absolute top-4 right-4">
+                <FontAwesomeIcon icon={faBars} className="text-3xl text-brown-600 cursor-pointer" />
+            </div>
+
             <div className="border rounded-lg p-6 mb-4 mt-4 bg-white shadow-lg max-w-xl h-180">
                 <div className="mt-2">
                     <h2 className="text-2xl font-semibold text-center mb-1">{recipe.tituloReceta}</h2>

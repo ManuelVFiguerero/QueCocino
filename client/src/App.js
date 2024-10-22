@@ -6,6 +6,8 @@ import RegisterUser from './pages/RegisterUser';
 import LoginUser from './pages/LoginUser';
 import RecoverPassword from './pages/RecoverPassword';
 import RecipeDetails from "./pages/RecipeDetails";
+import FavRecipes from "./pages/FavRecipes";
+import MyRecipes from "./pages/MyRecipes";
 
 const App = () => {
     return (
@@ -16,6 +18,8 @@ const App = () => {
                 <Route path="/register" element={<RegisterUser />} />
                 <Route path="/login" element={<LoginUser />} /> 
                 <Route path="/recipedetails" element={<RecipeDetails />} /> 
+                <Route path="/favrecipes" element={<FavRecipes />} /> 
+                <Route path="/myrecipes" element={<MyRecipes />} /> 
                 <Route path="/RecoverPassword" element={<RecoverPassword />} /> 
             </Routes>
         </BrowserRouter>

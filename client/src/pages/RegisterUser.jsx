@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import logo from '../assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faEnvelope, faLock, faBars } from '@fortawesome/free-solid-svg-icons';
 
 const RegisterUser = () => {
     const [nombre, setNombre] = useState('');
@@ -13,6 +13,9 @@ const RegisterUser = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200"> 
+            <div className="absolute top-4 right-4">
+                <FontAwesomeIcon icon={faBars} className="text-3xl text-brown-600 cursor-pointer" />
+            </div>
             <img src={logo} alt="Logo Que Cocino" className="w-32 mb-4" />
             <h1 className="text-4xl font-bold text-brown mb-4">Registrarse</h1>
             <div className="flex space-x-4 mb-4 w-full max-w-lg">
