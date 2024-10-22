@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons'; // Importa faBars
-import logo from '../assets/logo.png'; // Importa el logo
 
 const RecipeDetails = () => {
-    const location = useLocation(); // Acceder a la ubicación actual
-    const { recipe } = location.state || {}; // Extraer recipe del estado, o undefined si no está disponible
+    const location = useLocation(); 
+    const { recipe } = location.state || {}; 
+
+    // Estado para controlar la imagen actual
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Lista de imágenes (puedes añadir más cuando las tengas)
+    const images = [recipe.image, 'url/to/secondImage.jpg', 'url/to/thirdImage.jpg']; // Añade más imágenes aquí
+
+    // Función para cambiar la imagen
+    const changeImage = (direction) => {
+        if (direction === 'next') {
+            setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+        } else {
+            setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+        }
+    };
 
     // Manejo de errores
     if (!recipe) {
@@ -14,51 +26,77 @@ const RecipeDetails = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200"> 
-            {/* Logo en la esquina superior izquierda */}
-            <div className="absolute top-4 left-4">
-                <img src={logo} alt="Logo" className="w-16 h-16" />
-            </div>
-
-            {/* Menú hamburguesa en la esquina superior derecha */}
-            <div className="absolute top-4 right-4">
-                <FontAwesomeIcon icon={faBars} className="text-3xl text-brown-600 cursor-pointer" />
-            </div>
-
-            <div className="border rounded-lg p-6 mb-4 mt-4 bg-white shadow-lg max-w-xl h-180">
-                <div className="mt-2">
-                    <h2 className="text-2xl font-semibold text-center mb-1">{recipe.tituloReceta}</h2>
-                    <p className="text-center mb-4 text-lg">{recipe.autor}</p>
-                </div>
+        <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8"> 
+            {/* Contenedor de la imagen con carrusel */}
+            <div className="relative lg:w-1/2 w-full lg:h-auto mb-4 lg:mb-0 lg:mr-8">
                 <img 
-                    src={recipe.image} 
-                    className="w-full h-58 object-cover rounded" 
+                    src={images[currentImageIndex]} 
+                    alt="Imagen de la receta"
+                    className="w-full h-64 lg:h-auto object-cover rounded-lg shadow-lg" 
                 />
-                <div className="mt-4">
-                    <h2 className="text-2xl font-semibold text-center">Ingredientes</h2>     
-                    <ul className="list-disc list-inside text-lg text-left ml-4">
+
+                {/* Flechas de navegación minimalistas */}
+                <button 
+                    onClick={() => changeImage('prev')} 
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-gray-700 bg-opacity-50 hover:bg-opacity-75 px-2 py-1 rounded-full"
+                >
+                    ‹
+                </button>
+                <button 
+                    onClick={() => changeImage('next')} 
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white bg-gray-700 bg-opacity-50 hover:bg-opacity-75 px-2 py-1 rounded-full"
+                >
+                    ›
+                </button>
+
+                {/* Indicadores de imagen (circulitos) */}
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    {images.map((_, index) => (
+                        <span 
+                            key={index} 
+                            className={`w-2 h-2 rounded-full ${currentImageIndex === index ? 'bg-brown' : 'bg-gray-400'}`}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* Contenedor de detalles */}
+            <div className="lg:w-1/2 w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
+                <div className="text-center mb-6">
+                    <h2 className="text-2xl font-semibold mb-1">{recipe.tituloReceta}</h2>
+                    <p className="text-lg mb-4">{recipe.autor}</p>
+                </div>
+
+                {/* Ingredientes */}
+                <div className="mb-6">
+                    <h2 className="text-xl font-semibold">Ingredientes</h2>
+                    <ul className="list-disc list-inside text-lg mt-2">
                         {recipe.ingredientes.map((ingrediente, index) => (
                             <li key={index}>{ingrediente}</li>
                         ))}
                     </ul>
                 </div>
-                <div className="mt-4">
-                    <h2 className="text-2xl font-semibold text-center">Instrucciones</h2>
-                    <p className="text-center mb-4 text-lg">{recipe.instrucciones}</p>
+
+                {/* Instrucciones */}
+                <div className="mb-6">
+                    <h2 className="text-xl font-semibold">Instrucciones</h2>
+                    <p className="text-lg mt-2">{recipe.instrucciones}</p>
                 </div>
-                <div className="mt-4">
-                    <h2 className="text-2xl font-semibold text-center">Restricciones/Alimentaciones</h2>
-                    <ul className="list-disc list-inside text-lg text-left ml-4">
+
+                {/* Restricciones */}
+                <div className="mb-6">
+                    <h2 className="text-xl font-semibold">Restricciones/Alimentaciones</h2>
+                    <ul className="list-disc list-inside text-lg mt-2">
                         {recipe.restricciones.map((restriccion, index) => (
                             <li key={index}>{restriccion}</li>
                         ))}
                     </ul>
                 </div>
-                <div className="flex justify-center mt-6">
-                    <button className="bg-brown text-white text-sm px-4 py-2 rounded-full hover:bg-brown-700 transition duration-200">Guardar Receta</button>
-                </div>
-                <div className="flex justify-center mt-6">
-                    <button className="bg-white text-brown text-xs px-5 py-2 rounded-full border border-brown hover:bg-brown-100 transition duration-200">Calificar Receta</button>
+
+                {/* Botones */}
+                <div className="flex flex-col lg:flex-row justify-around space-y-4 lg:space-y-0 lg:space-x-4">
+                    <button className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-700 transition duration-200">Guardar Receta</button>
+                    <button className="bg-white text-brown px-5 py-2 rounded-full border border-brown hover:bg-brown-100 transition duration-200">Calificar Receta</button>
                 </div>
             </div>
         </div>
@@ -66,3 +104,6 @@ const RecipeDetails = () => {
 };
 
 export default RecipeDetails;
+
+
+

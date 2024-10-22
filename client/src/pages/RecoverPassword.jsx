@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faBars  } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope} from '@fortawesome/free-solid-svg-icons';
 import capybara from '../assets/capibaraConfundido.webp';
 
 
@@ -9,9 +9,6 @@ const RecoverPassword = () => {
     const [email, setEmail] = useState('');
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200"> 
-            <div className="absolute top-4 right-4">
-                <FontAwesomeIcon icon={faBars} className="text-3xl text-brown-600 cursor-pointer" />
-            </div>
             <img src={capybara} alt="Logo Que Cocino" className="w-32 mb-4" />
             <h1 className="text-4xl font-bold text-brown mb-4">Recuperar Contraseña</h1>
             <div className="flex items-center border-2 border-brown rounded-md bg-white mb-4 w-full max-w-sm"> {/* Cambié max-w-lg por max-w-md */}

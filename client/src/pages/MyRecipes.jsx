@@ -3,7 +3,6 @@ import RecipeCard from '../components/RecipeCard';
 import logo from '../assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { faBars } from '@fortawesome/free-solid-svg-icons'; // Importa faBars
 
 const MyRecipes = () => {
     const allRecetas = [
@@ -332,10 +331,6 @@ const MyRecipes = () => {
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200">  {/* Ajusta los colores aquí */}
 
-            {/* Menú hamburguesa en la esquina superior derecha */}
-            <div className="absolute top-4 right-4">
-                <FontAwesomeIcon icon={faBars} className="text-3xl text-brown-600 cursor-pointer" />
-            </div>
 
             <img src={logo} alt="Logo Que Cocino" className="w-32 mb-4" />
             <h1 className="text-4xl font-bold text-brown-600 mb-4">Mis Recetas</h1>

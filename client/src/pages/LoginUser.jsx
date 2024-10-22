@@ -9,9 +9,6 @@ const LoginUser = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200"> 
-            <div className="absolute top-4 right-4">
-                <FontAwesomeIcon icon={faBars} className="text-3xl text-brown-600 cursor-pointer" />
-            </div>
             <img src={logo} alt="Logo Que Cocino" className="w-40 h-40 mb-5" />
             <h1 className="text-4xl font-bold text-brown mb-4">Iniciar Sesion</h1>
             <div className="flex items-center border-2 border-brown rounded-md bg-white mb-4 w-full max-w-sm"> {/* Cambié max-w-lg por max-w-md */}
