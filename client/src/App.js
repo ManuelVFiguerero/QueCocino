@@ -10,27 +10,32 @@ import RecipeDetails from "./pages/RecipeDetails";
 import FavRecipes from "./pages/FavRecipes";
 import MyRecipes from "./pages/MyRecipes";
 import AboutUs from './pages/AboutUs';
+import CreateRecipe from './pages/CreateRecipe';
+import { AuthProvider } from './components/AuthContext';  // Importamos el AuthProvider
+import PrivateRoute from './components/PrivateRoute';  // Usamos la ruta privada
 
 const App = () => {
     return (
-        <BrowserRouter>
-            <NavBar />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="/test" element={<TestPage />} />
-                <Route path="/register" element={<RegisterUser />} />
-                <Route path="/login" element={<LoginUser />} /> 
-                <Route path="/recipedetails" element={<RecipeDetails />} /> 
-                <Route path="/favrecipes" element={<FavRecipes />} /> 
-                <Route path="/myrecipes" element={<MyRecipes />} /> 
-                <Route path="/RecoverPassword" element={<RecoverPassword />} /> 
-            </Routes>
-        </BrowserRouter>
+        <AuthProvider>
+            <BrowserRouter>
+                <NavBar />
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/about" element={<AboutUs />} />
+                    <Route path="/test" element={<TestPage />} />
+                    <Route path="/register" element={<RegisterUser />} />
+                    <Route path="/login" element={<LoginUser />} /> 
+                    <Route path="/RecoverPassword" element={<RecoverPassword />} />
+
+                    {/* Rutas protegidas */}
+                    <Route path="/recipedetails" element={<PrivateRoute><RecipeDetails /></PrivateRoute>} /> 
+                    <Route path="/favrecipes" element={<PrivateRoute><FavRecipes /></PrivateRoute>} /> 
+                    <Route path="/myrecipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
+                    <Route path="/createrecipe" element={<PrivateRoute><CreateRecipe /></PrivateRoute>} />
+                </Routes>
+            </BrowserRouter>
+        </AuthProvider>
     );
 };
 
 export default App;
-
-
-

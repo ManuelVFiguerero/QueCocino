@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faUserPlus, faInfoCircle, faHome, faBars } from '@fortawesome/free-solid-svg-icons'; // Asegúrate de importar faBars también
+import { faUser, faUserPlus, faInfoCircle, faHome, faBars, faSearch, faPlus, faHeart, faBook, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from './AuthContext';  // Importamos el contexto de autenticación
 
 const NavBar = () => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);  // Estado para manejar si el menú está abierto
+  const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();  // Obtenemos el estado de autenticación
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);  // Cambia el estado del menú (abrir/cerrar)
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -19,33 +21,58 @@ const NavBar = () => {
         <FontAwesomeIcon icon={faHome} className="text-black text-2xl" />
       </div>
 
-      {/* Menú burger con Tailwind CSS */}
-      <div className="relative z-50">  {/* z-50 para asegurar que esté al frente */}
-        {/* Icono de las tres rayas */}
+      {/* Menú burger */}
+      <div className="relative z-50">
         <button onClick={toggleMenu} className="focus:outline-none">
           <FontAwesomeIcon icon={faBars} className="text-black text-2xl" />
         </button>
 
-        {/* Menu pop-up */}
         {isOpen && (
           <div className="absolute top-12 right-0 bg-white shadow-lg rounded-lg w-52 py-4 px-6 z-50">
             <button onClick={toggleMenu} className="absolute top-2 right-2 text-gray-500 focus:outline-none">
-              &#10005; {/* Esto es la "X" */}
+              &#10005;
             </button>
-            <div className="space-y-4">
-              <a onClick={() => { navigate('/login'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
-                <FontAwesomeIcon icon={faUser} />
-                <span>Iniciar Sesión</span>
-              </a>
-              <a onClick={() => { navigate('/register'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
-                <FontAwesomeIcon icon={faUserPlus} />
-                <span>Registrarse</span>
-              </a>
-              <a onClick={() => { navigate('/about'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
-                <FontAwesomeIcon icon={faInfoCircle} />
-                <span>Nosotros</span>
-              </a>
-            </div>
+
+            {/* Opciones de menú según el estado de autenticación */}
+            {isAuthenticated ? (
+              <div className="space-y-4">
+                <a onClick={() => { navigate('/myrecipes'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faBook} />
+                  <span>Mis Recetas</span>
+                </a>
+                <a onClick={() => { navigate('/favrecipes'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faHeart} />
+                  <span>Recetas Favoritas</span>
+                </a>
+                <a onClick={() => { navigate('/createrecipe'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faPlus} />
+                  <span>Crear Receta</span>
+                </a>
+                <a onClick={() => { navigate('/profile'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faUserCircle} />
+                  <span>Mi Perfil</span>
+                </a>
+                <a onClick={() => { logout(); navigate('/'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faUser} />
+                  <span>Cerrar Sesión</span>
+                </a>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <a onClick={() => { navigate('/login'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faUser} />
+                  <span>Iniciar Sesión</span>
+                </a>
+                <a onClick={() => { navigate('/register'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faUserPlus} />
+                  <span>Registrarse</span>
+                </a>
+                <a onClick={() => { navigate('/about'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
+                  <FontAwesomeIcon icon={faInfoCircle} />
+                  <span>Nosotros</span>
+                </a>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -54,11 +81,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-
-
-
-
-
-
-
-
