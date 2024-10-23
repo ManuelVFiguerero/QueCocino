@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { slide as Menu } from 'react-burger-menu';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faUserPlus, faInfoCircle, faHome, faBars, faSearch, faPlus, faHeart, faBook, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faUserPlus, faInfoCircle, faHome, faBars, faSearch, faPlus, faHeart, faBook, faUserCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from './AuthContext';  // Importamos el contexto de autenticación
 
 const NavBar = () => {
@@ -53,9 +53,10 @@ const NavBar = () => {
                   <span>Mi Perfil</span>
                 </a>
                 <a onClick={() => { logout(); navigate('/'); toggleMenu(); }} className="flex items-center space-x-2 text-gray-700 hover:text-blue-500 cursor-pointer">
-                  <FontAwesomeIcon icon={faUser} />
+                  <FontAwesomeIcon icon={faSignOutAlt} />
                   <span>Cerrar Sesión</span>
                 </a>
+
               </div>
             ) : (
               <div className="space-y-4">

@@ -10,6 +10,7 @@ import RecipeDetails from "./pages/RecipeDetails";
 import FavRecipes from "./pages/FavRecipes";
 import MyRecipes from "./pages/MyRecipes";
 import AboutUs from './pages/AboutUs';
+import EditRecipe from './pages/EditRecipe';
 import CreateRecipe from './pages/CreateRecipe';
 import { AuthProvider } from './components/AuthContext';  // Importamos el AuthProvider
 import PrivateRoute from './components/PrivateRoute';  // Usamos la ruta privada
@@ -32,6 +33,7 @@ const App = () => {
                     <Route path="/favrecipes" element={<PrivateRoute><FavRecipes /></PrivateRoute>} /> 
                     <Route path="/myrecipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
                     <Route path="/createrecipe" element={<PrivateRoute><CreateRecipe /></PrivateRoute>} />
+                    <Route path="/editrecipe" element={<PrivateRoute><EditRecipe /></PrivateRoute>} />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>

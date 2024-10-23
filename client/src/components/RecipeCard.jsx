@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Importa Link desde react-router-dom
 
-const RecipeCard = ({ recipe }) => {
+const RecipeCard = ({ recipe, isMyRecipes = false }) => {
     // Estado para controlar la imagen actual
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Lista de imágenes (puedes añadir más cuando las tengas)
-    const images = [recipe.image, 'url/to/secondImage.jpg', 'url/to/thirdImage.jpg']; // Añade más imágenes aquí
+    const images = recipe.image; // Añade más imágenes aquí
 
     // Función para cambiar la imagen
     const changeImage = (direction) => {
@@ -58,8 +58,22 @@ const RecipeCard = ({ recipe }) => {
             <p className="text-center mb-4 text-sm flex-grow">{recipe.descripcion}</p> 
 
             <div className="flex justify-end space-x-2 mt-auto">
-                <button className="bg-white text-brown text-xs px-3 py-1 rounded-full border border-brown hover:bg-brown-100 transition duration-200">Guardar</button>
-                
+                {isMyRecipes ? (
+                    // Si isMyRecipes es true, muestra el botón "Editar"
+                    <Link 
+                        to="/editrecipe" 
+                        state={{ recipe }} 
+                        className="bg-white text-brown text-xs px-3 py-1 rounded-full border border-brown hover:bg-brown-100 transition duration-200"
+                    >
+                        Editar
+                    </Link>
+                ) : (
+                    // Si no, muestra el botón "Guardar"
+                    <button className="bg-white text-brown text-xs px-3 py-1 rounded-full border border-brown hover:bg-brown-100 transition duration-200">
+                        Guardar
+                    </button>
+                )}
+
                 {/* Enlace al detalle de la receta con el objeto recipe como estado */}
                 <Link 
                     to="/recipedetails" 
@@ -74,11 +88,3 @@ const RecipeCard = ({ recipe }) => {
 };
 
 export default RecipeCard;
-
-
-
-
-
-
-
-

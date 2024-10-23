@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const CreateRecipe = () => {
+const EditRecipe = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { recipe } = location.state || {};  // Obtenemos 'recipe' del state pasado al hacer navigate
     const [tituloReceta, setTituloReceta] = useState('');
-    const [autor] = useState('Nombre Fijo'); // Autocompletado fijo
+    const [autor] = useState('Nombre Fijo');  // Autocompletado fijo
     const [ingredientes, setIngredientes] = useState([]);
     const [ingredienteActual, setIngredienteActual] = useState('');
     const [instrucciones, setInstrucciones] = useState('');
@@ -12,6 +14,18 @@ const CreateRecipe = () => {
     const [restriccionActual, setRestriccionActual] = useState('');
     const [imagenes, setImagenes] = useState([]);
 
+    // Cargar los datos de recipe cuando el componente se monta
+    useEffect(() => {
+        if (recipe) {
+            setTituloReceta(recipe.tituloReceta || '');
+            setIngredientes(recipe.ingredientes || []);
+            setInstrucciones(recipe.instrucciones || '');
+            setRestricciones(recipe.restricciones || []);
+            setImagenes(recipe.image || []);
+        }
+    }, [recipe]);
+
+    // Función para agregar ingredientes
     const agregarIngrediente = () => {
         if (ingredienteActual) {
             setIngredientes([...ingredientes, ingredienteActual]);
@@ -19,10 +33,17 @@ const CreateRecipe = () => {
         }
     };
 
-    const eliminarIngrediente = (index) => {
-        setIngredientes(ingredientes.filter((_, i) => i !== index));
-    };
+// Función para eliminar ingrediente
+const eliminarIngrediente = (index) => {
+    setIngredientes((prevIngredientes) => {
+        const nuevosIngredientes = prevIngredientes.filter((_, i) => i !== index);
+        console.log('Ingredientes restantes:', nuevosIngredientes);  // Verifica los ingredientes restantes
+        return nuevosIngredientes;
+    });
+};
 
+
+    // Función para agregar restricciones
     const agregarRestriccion = () => {
         if (restriccionActual) {
             setRestricciones([...restricciones, restriccionActual]);
@@ -30,10 +51,12 @@ const CreateRecipe = () => {
         }
     };
 
+    // Función para eliminar restricción
     const eliminarRestriccion = (index) => {
         setRestricciones(restricciones.filter((_, i) => i !== index));
     };
 
+    // Función para manejar la subida de imágenes
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         if (imagenes.length + files.length <= 3) {
@@ -43,15 +66,18 @@ const CreateRecipe = () => {
         }
     };
 
+    // Validación y publicación
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        // Validar que los campos requeridos no estén vacíos
         if (!tituloReceta || !ingredientes.length || !instrucciones || !imagenes.length) {
             alert('Por favor, completa todos los campos requeridos.');
             return;
         }
 
-        const nuevaReceta = {
+        // Simular la actualización de la receta
+        const recetaEditada = {
             tituloReceta,
             autor,
             ingredientes,
@@ -60,19 +86,19 @@ const CreateRecipe = () => {
             imagenes,
         };
 
-        console.log('Receta publicada:', nuevaReceta);
-        navigate('/myrecipes');
+        console.log('Receta actualizada:', recetaEditada);
+        navigate('/myrecipes');  // Redirige a /myrecipes después de confirmar los cambios
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8">
-            {/* Título centrado sobre ambos contenedores */}
-            <h1 className="text-4xl font-bold text-brown-600 mb-8 text-center">Crear Receta</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8">
+            {/* Título centrado */}
+            <h1 className="text-4xl font-bold text-brown-600 mb-8 text-center">Editar Receta</h1>
 
-            {/* Contenedor principal que contiene los dos sub-contenedores */}
+            {/* Contenedor de los dos segmentos: imágenes y formulario */}
             <div className="flex flex-col lg:flex-row items-center justify-center w-full space-y-8 lg:space-y-0 lg:space-x-8">
                 {/* Contenedor de la subida de imágenes */}
-                <div className="relative lg:w-1/2 w-full lg:h-auto mb-4 lg:mb-0 lg:mr-8">
+                <div className="relative lg:w-1/2 w-full lg:h-auto">
                     <label className="block mb-2 font-semibold">Subir Imágenes (Máximo 3)</label>
                     <input 
                         type="file" 
@@ -85,7 +111,7 @@ const CreateRecipe = () => {
                         {imagenes.map((imagen, index) => (
                             <img
                                 key={index}
-                                src={URL.createObjectURL(imagen)}
+                                src={typeof imagen === 'string' ? imagen : URL.createObjectURL(imagen)}
                                 alt={`Imagen ${index + 1}`}
                                 className="w-24 h-24 object-cover rounded-lg shadow-lg"
                             />
@@ -128,11 +154,13 @@ const CreateRecipe = () => {
                                 <li key={index} className="flex justify-between items-center">
                                     <span>{ingrediente}</span>
                                     <button 
+                                        type="button"  // Cambia a 'button' para evitar el envío del formulario
                                         onClick={() => eliminarIngrediente(index)} 
                                         className="text-red-500 hover:text-red-700"
                                     >
                                         Eliminar
                                     </button>
+
                                 </li>
                             ))}
                         </ul>
@@ -181,19 +209,19 @@ const CreateRecipe = () => {
                         </ul>
                     </div>
 
-                    {/* Botón de Publicar */}
+                    {/* Botón de Confirmar Cambios */}
                     <div className="text-center">
                         <button 
                             type="submit" 
                             className="bg-brown text-white px-6 py-3 rounded-full hover:bg-brown-700 transition duration-200"
                         >
-                            Publicar Receta
+                            Confirmar Cambios
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     );
 };
 
-export default CreateRecipe;
+export default EditRecipe;

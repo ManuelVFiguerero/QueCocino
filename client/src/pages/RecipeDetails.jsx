@@ -9,7 +9,7 @@ const RecipeDetails = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Lista de imágenes (puedes añadir más cuando las tengas)
-    const images = [recipe.image, 'url/to/secondImage.jpg', 'url/to/thirdImage.jpg']; // Añade más imágenes aquí
+    const images = recipe.image; // Añade más imágenes aquí
 
     // Función para cambiar la imagen
     const changeImage = (direction) => {
