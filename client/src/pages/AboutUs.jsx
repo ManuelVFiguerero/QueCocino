@@ -30,7 +30,7 @@ const teamMembers = [
     name: 'Cristóbal Perez Companc',
     role: 'Rol',
     description: '...',
-    imageUrl: CristobalImg, // Cambia esta imagen si tienes la correcta para Cristóbal
+    imageUrl: CristobalImg,
   },
   {
     name: 'Tomás Gabriel Muguerza Marino',
@@ -81,7 +81,7 @@ const AboutUs = () => {
   
         {/* Botón de descarga del PDF */}
         <div className="mt-6 flex justify-center">
-          <a href="/path-to-your-pdf.pdf" download className="flex items-center bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-700">
+          <a href="" download className="flex items-center bg-red-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-700">
             <FontAwesomeIcon icon={faFilePdf} className="mr-2" />
             Descargar Proyecto en PDF
           </a>

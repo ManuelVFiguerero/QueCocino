@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { FaLeaf, FaBreadSlice } from 'react-icons/fa'; // Cambié FaWheat por FaBreadSlice
+
 
 const RecipeDetails = () => {
     const location = useLocation(); 
@@ -9,7 +11,7 @@ const RecipeDetails = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     // Lista de imágenes (puedes añadir más cuando las tengas)
-    const images = recipe.image; // Añade más imágenes aquí
+    const images = recipe?.image || []; // Asegúrate de que `images` esté definido
 
     // Función para cambiar la imagen
     const changeImage = (direction) => {
@@ -20,10 +22,37 @@ const RecipeDetails = () => {
         }
     };
 
-    // Manejo de errores
+    // Si no se encuentra la receta, mostrar un mensaje
     if (!recipe) {
         return <p>No se encontró la receta.</p>;
     }
+
+    // Obtener el estilo y el ícono para cada restricción
+    const getRestrictionStyle = (restriccion) => {
+        switch (restriccion.toLowerCase()) {
+            case 'apto celiaco':
+                return {
+                    icon: <FaBreadSlice className="inline-block mr-1" />,
+                    bgColor: 'bg-red-100',
+                    textColor: 'text-red-600',
+                    label: 'Sin TACC',
+                };
+            case 'apto vegano':
+                return {
+                    icon: <FaLeaf className="inline-block mr-1" />,
+                    bgColor: 'bg-green-100',
+                    textColor: 'text-green-600',
+                    label: 'Apto Vegano',
+                };
+            default:
+                return {
+                    icon: null,
+                    bgColor: 'bg-gray-100',
+                    textColor: 'text-gray-600',
+                    label: restriccion,
+                };
+        }
+    };
 
     return (
         <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8"> 
@@ -86,11 +115,20 @@ const RecipeDetails = () => {
                 {/* Restricciones */}
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold">Restricciones/Alimentaciones</h2>
-                    <ul className="list-disc list-inside text-lg mt-2">
-                        {recipe.restricciones.map((restriccion, index) => (
-                            <li key={index}>{restriccion}</li>
-                        ))}
-                    </ul>
+                    <div className="flex space-x-2">
+                        {recipe.restricciones.map((restriccion, index) => {
+                            const { icon, bgColor, textColor, label } = getRestrictionStyle(restriccion);
+                            return (
+                                <span 
+                                    key={index} 
+                                    className={`flex items-center px-3 py-1 rounded-full ${bgColor} ${textColor} text-sm font-semibold`}
+                                >
+                                    {icon}
+                                    {label}
+                                </span>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 {/* Botones */}
@@ -104,6 +142,3 @@ const RecipeDetails = () => {
 };
 
 export default RecipeDetails;
-
-
-

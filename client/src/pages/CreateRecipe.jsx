@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaLeaf, FaBreadSlice, FaGlassWhiskey, FaCarrot, FaDrumstickBite, FaSeedling } from 'react-icons/fa'; // Íconos para las restricciones
 
 const CreateRecipe = () => {
     const navigate = useNavigate();
@@ -8,9 +9,27 @@ const CreateRecipe = () => {
     const [ingredientes, setIngredientes] = useState([]);
     const [ingredienteActual, setIngredienteActual] = useState('');
     const [instrucciones, setInstrucciones] = useState('');
-    const [restricciones, setRestricciones] = useState([]);
-    const [restriccionActual, setRestriccionActual] = useState('');
+    const [restriccionesSeleccionadas, setRestriccionesSeleccionadas] = useState([]);
     const [imagenes, setImagenes] = useState([]);
+
+    // Lista de restricciones alimentarias disponibles
+    const restriccionesDisponibles = [
+        { id: 'vegano', label: 'Apto Vegano', icon: <FaLeaf className="inline-block mr-1" />, color: 'bg-green-100 text-green-600' },
+        { id: 'celiaco', label: 'Sin TACC', icon: <FaBreadSlice className="inline-block mr-1" />, color: 'bg-red-100 text-red-600' },
+        { id: 'sinLactosa', label: 'Sin Lactosa', icon: <FaGlassWhiskey className="inline-block mr-1" />, color: 'bg-blue-100 text-blue-600' },
+        { id: 'vegetariano', label: 'Apto Vegetariano', icon: <FaCarrot className="inline-block mr-1" />, color: 'bg-green-200 text-green-700' },
+        { id: 'keto', label: 'Keto', icon: <FaDrumstickBite className="inline-block mr-1" />, color: 'bg-orange-100 text-orange-600' },
+        { id: 'sinFrutosSecos', label: 'Sin Frutos Secos', icon: <FaSeedling className="inline-block mr-1" />, color: 'bg-brown-100 text-brown-600' }
+    ];
+
+    // Agregar o quitar restricciones seleccionadas
+    const toggleRestriccion = (id) => {
+        if (restriccionesSeleccionadas.includes(id)) {
+            setRestriccionesSeleccionadas(restriccionesSeleccionadas.filter((restriccion) => restriccion !== id));
+        } else {
+            setRestriccionesSeleccionadas([...restriccionesSeleccionadas, id]);
+        }
+    };
 
     const agregarIngrediente = () => {
         if (ingredienteActual) {
@@ -21,17 +40,6 @@ const CreateRecipe = () => {
 
     const eliminarIngrediente = (index) => {
         setIngredientes(ingredientes.filter((_, i) => i !== index));
-    };
-
-    const agregarRestriccion = () => {
-        if (restriccionActual) {
-            setRestricciones([...restricciones, restriccionActual]);
-            setRestriccionActual('');
-        }
-    };
-
-    const eliminarRestriccion = (index) => {
-        setRestricciones(restricciones.filter((_, i) => i !== index));
     };
 
     const handleImageUpload = (e) => {
@@ -56,7 +64,7 @@ const CreateRecipe = () => {
             autor,
             ingredientes,
             instrucciones,
-            restricciones,
+            restricciones: restriccionesSeleccionadas, // Las restricciones seleccionadas
             imagenes,
         };
 
@@ -66,12 +74,9 @@ const CreateRecipe = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8">
-            {/* Título centrado sobre ambos contenedores */}
             <h1 className="text-4xl font-bold text-brown-600 mb-8 text-center">Crear Receta</h1>
 
-            {/* Contenedor principal que contiene los dos sub-contenedores */}
             <div className="flex flex-col lg:flex-row items-center justify-center w-full space-y-8 lg:space-y-0 lg:space-x-8">
-                {/* Contenedor de la subida de imágenes */}
                 <div className="relative lg:w-1/2 w-full lg:h-auto mb-4 lg:mb-0 lg:mr-8">
                     <label className="block mb-2 font-semibold">Subir Imágenes (Máximo 3)</label>
                     <input 
@@ -93,7 +98,6 @@ const CreateRecipe = () => {
                     </div>
                 </div>
 
-                {/* Contenedor de detalles */}
                 <div className="lg:w-1/2 w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
                     <div className="mb-6">
                         <label className="block font-semibold text-xl mb-2">Título de la Receta</label>
@@ -151,40 +155,26 @@ const CreateRecipe = () => {
 
                     <div className="mb-6">
                         <label className="block font-semibold text-xl mb-2">Restricciones/Alimentaciones (Opcional)</label>
-                        <div className="flex space-x-2 mb-2">
-                            <input
-                                type="text"
-                                value={restriccionActual}
-                                onChange={(e) => setRestriccionActual(e.target.value)}
-                                className="flex-grow p-2 border border-gray-300 rounded-md"
-                            />
-                            <button 
-                                type="button" 
-                                onClick={agregarRestriccion} 
-                                className="bg-brown text-white px-4 py-2 rounded-full"
-                            >
-                                Agregar
-                            </button>
-                        </div>
-                        <ul className="list-disc list-inside">
-                            {restricciones.map((restriccion, index) => (
-                                <li key={index} className="flex justify-between items-center">
-                                    <span>{restriccion}</span>
-                                    <button 
-                                        onClick={() => eliminarRestriccion(index)} 
-                                        className="text-red-500 hover:text-red-700"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </li>
+                        <div className="flex flex-wrap gap-2">
+                            {restriccionesDisponibles.map((restriccion) => (
+                                <button
+                                    key={restriccion.id}
+                                    onClick={() => toggleRestriccion(restriccion.id)}
+                                    className={`flex items-center px-3 py-1 rounded-full ${restriccion.color} text-sm font-semibold ${
+                                        restriccionesSeleccionadas.includes(restriccion.id) ? 'ring-2 ring-offset-2' : ''
+                                    }`}
+                                >
+                                    {restriccion.icon}
+                                    {restriccion.label}
+                                </button>
                             ))}
-                        </ul>
+                        </div>
                     </div>
 
-                    {/* Botón de Publicar */}
                     <div className="text-center">
                         <button 
                             type="submit" 
+                            onClick={handleSubmit}
                             className="bg-brown text-white px-6 py-3 rounded-full hover:bg-brown-700 transition duration-200"
                         >
                             Publicar Receta
@@ -197,3 +187,4 @@ const CreateRecipe = () => {
 };
 
 export default CreateRecipe;
+
