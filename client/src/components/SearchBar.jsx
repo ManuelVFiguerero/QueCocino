@@ -13,7 +13,7 @@ const SearchBar = ({ onSearch }) => {
         <div className="flex items-center mb-4 w-full max-w-md">
             <input
                 type="text"
-                placeholder="Buscar Ingredientes"
+                placeholder="Introduce los ingredientes para buscar recetas."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 className="flex-grow p-3 border-2 border-brown rounded-l-md bg-white focus:outline-none focus:ring-2 focus:ring-brown"

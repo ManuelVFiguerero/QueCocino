@@ -5,11 +5,29 @@ import logo from '../assets/logo.png';
 import DefaultGrid from '../components/DefaultGrid'; // Asegúrate de tener este componente
 import SearchGrid from '../components/SearchGrid'; // Asegúrate de tener este componente
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFire, faFlag, faBan } from '@fortawesome/free-solid-svg-icons';
+import { faLeaf, faBreadSlice, faTint, faCarrot, faFire, faBan } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
     const [ingredientes, setIngredientes] = useState([]);
-    
+    const [showFilters, setShowFilters] = useState(false);
+    const [selectedFilters, setSelectedFilters] = useState([]);
+
+    const toggleFilter = (filter) => {
+        if (selectedFilters.includes(filter)) {
+            setSelectedFilters(selectedFilters.filter((f) => f !== filter));
+        } else {
+            setSelectedFilters([...selectedFilters, filter]);
+        }
+    };
+
+    const filterOptions = [
+        { name: 'Apto Vegano', icon: faLeaf, color: 'bg-green-200 text-green-800' },
+        { name: 'Sin TACC', icon: faBreadSlice, color: 'bg-red-200 text-red-800' },
+        { name: 'Sin Lactosa', icon: faTint, color: 'bg-blue-200 text-blue-800' },
+        { name: 'Apto Vegetariano', icon: faCarrot, color: 'bg-green-300 text-green-800' },
+        { name: 'Keto', icon: faFire, color: 'bg-orange-200 text-orange-800' },
+        { name: 'Sin Frutos Secos', icon: faBan, color: 'bg-brown-200 text-brown-800' },
+    ];
     const recetas = [
         {
             tituloReceta: "Pasta de Almendra",
@@ -317,9 +335,13 @@ const Home = () => {
         <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200">
             <img src={logo} alt="Logo Que Cocino" className="w-32 mb-4" />
             <h1 className="text-4xl font-bold text-brown-600 mb-4">Buscar Recetas</h1>
+            
+            
+
+            {/* Search Bar */}
             <SearchBar onSearch={addIngredient} />
             
-            {/* Muestra los ingredientes ingresados */}
+            {/* Ingredientes seleccionados */}
             <div className="flex flex-wrap mt-4">
                 {ingredientes.length > 0 && ingredientes.map((ingredient, index) => (
                     <div key={index} className="flex items-center border border-gray-400 rounded-full bg-transparent px-3 py-1 mr-2 mb-2">
@@ -333,17 +355,36 @@ const Home = () => {
                     </div>
                 ))}
             </div>
+{/* Botón Filtros */}
+<button 
+                onClick={() => setShowFilters(!showFilters)} 
+                className="mb-4 bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-700 transition duration-200"
+            >
+                {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+            </button>
 
-            {/* Solo muestra este texto si no hay ingredientes ingresados */}
-            {ingredientes.length === 0 && (
-                <p className="mt-4 text-gray-600">Introduce los ingredientes para buscar recetas.</p>
+            {/* Opciones de Filtros */}
+            {showFilters && (
+                <div className="flex flex-wrap justify-center mt-4 mb-4">
+                    {filterOptions.map((filter) => (
+                        <button
+                            key={filter.name}
+                            onClick={() => toggleFilter(filter.name)}
+                            className={`flex items-center border px-3 py-1 m-2 rounded-full ${filter.color} ${
+                                selectedFilters.includes(filter.name) ? 'border-2 border-black' : ''
+                            }`}
+                        >
+                            <FontAwesomeIcon icon={filter.icon} className="mr-2" />
+                            {filter.name}
+                        </button>
+                    ))}
+                </div>
             )}
-
-            {/* Renderiza DefaultGrid o SearchGrid según los ingredientes ingresados */}
+            {/* Grid de recetas según los ingredientes */}
             {ingredientes.length === 0 ? (
                 <DefaultGrid recetas={recetas} />
             ) : (
-                <SearchGrid allRecetas={recetas} />
+                <SearchGrid allRecetas={recetas} selectedFilters={selectedFilters} />
             )}
         </div>
     );

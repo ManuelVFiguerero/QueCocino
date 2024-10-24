@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import Modal from '../components/Modal';
+import CalificationCard from '../components/CalificationCard';
 import { FaLeaf, FaBreadSlice } from 'react-icons/fa'; // Cambié FaWheat por FaBreadSlice
-
 
 const RecipeDetails = () => {
     const location = useLocation(); 
@@ -9,6 +10,9 @@ const RecipeDetails = () => {
 
     // Estado para controlar la imagen actual
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Estado para manejar el modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Lista de imágenes (puedes añadir más cuando las tengas)
     const images = recipe?.image || []; // Asegúrate de que `images` esté definido
@@ -134,11 +138,26 @@ const RecipeDetails = () => {
                 {/* Botones */}
                 <div className="flex flex-col lg:flex-row justify-around space-y-4 lg:space-y-0 lg:space-x-4">
                     <button className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-700 transition duration-200">Guardar Receta</button>
-                    <button className="bg-white text-brown px-5 py-2 rounded-full border border-brown hover:bg-brown-100 transition duration-200">Calificar Receta</button>
+                    <button 
+                        className="bg-white text-brown px-5 py-2 rounded-full border border-brown hover:bg-brown-100 transition duration-200"
+                        onClick={() => setIsModalOpen(true)} // Abre el modal
+                    >
+                        Calificar Receta
+                    </button>
                 </div>
             </div>
+
+            {/* Modal con la tarjeta de calificación */}
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <CalificationCard onSubmit={(calificationData) => {
+                    console.log('Datos de calificación:', calificationData);
+                    setIsModalOpen(false); // Cerrar el modal después de enviar la calificación
+                }} />
+            </Modal>
         </div>
     );
 };
 
 export default RecipeDetails;
+
+
