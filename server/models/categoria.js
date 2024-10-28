@@ -6,4 +6,4 @@ const categoriaSchema = new Schema({
     tipoCategoria: { type: String, enum: ['Cultura', 'Restriccion', 'Tipo'], required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Categoria', categoriaSchema);
+module.exports = mongoose.models.Categoria || mongoose.model('Categoria', categoriaSchema);

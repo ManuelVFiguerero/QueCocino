@@ -1,4 +1,4 @@
-const Comentario = require('../models/comentario');
+const Comentario = require('../models/Comentario');
 
 class ComentarioController {
     async agregarComentario(req, res) {

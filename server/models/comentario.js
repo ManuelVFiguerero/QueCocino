@@ -6,4 +6,4 @@ const comentarioSchema = new Schema({
     idUsuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Comentario', comentarioSchema);
+module.exports = mongoose.models.Comentario || mongoose.model('Comentario', comentarioSchema);  

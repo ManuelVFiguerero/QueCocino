@@ -7,4 +7,4 @@ const ingredienteSchema = new Schema({
     id: { type: Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() }
 });
 
-module.exports = mongoose.model('Ingrediente', ingredienteSchema);
+module.exports = mongoose.models.Ingrediente || mongoose.model('Ingrediente', ingredienteSchema);

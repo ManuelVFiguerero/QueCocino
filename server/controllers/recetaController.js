@@ -1,4 +1,4 @@
-const Receta = require('../models/receta');
+const Receta = require('../models/Receta');
 
 class RecetaController {
     async buscarPorIngredientes(req, res) {

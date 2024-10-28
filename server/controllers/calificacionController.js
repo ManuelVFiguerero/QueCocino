@@ -1,4 +1,4 @@
-const Calificacion = require('../models/calificacion');
+const Calificacion = require('../models/Calificacion');
 
 class CalificacionController {
     async agregarCalificacion(req, res) {

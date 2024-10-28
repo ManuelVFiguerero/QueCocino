@@ -1,4 +1,4 @@
-const Ingrediente = require('../models/ingrediente');
+const Ingrediente = require('../models/Ingrediente');
 
 class IngredienteController {
     async agregarIngredienteNuevo(req, res) {

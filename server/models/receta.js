@@ -9,4 +9,4 @@ const recetaSchema = new Schema({
     calificaciones: [{ type: Schema.Types.ObjectId, ref: 'Calificacion' }]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Receta', recetaSchema);
+module.exports = mongoose.models.Receta || mongoose.model('Receta', recetaSchema);
