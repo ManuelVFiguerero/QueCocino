@@ -3,7 +3,6 @@ const express = require('express');
 const connectDB = require('./config/db');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const recetaRoutes = require('./routes/recetaRoutes');
-const ingredienteRoutes = require('./routes/ingredienteRoutes');
 const comentarioRoutes = require('./routes/comentarioRoutes');
 const calificacionRoutes = require('./routes/calificacionRoutes');
 
@@ -17,7 +16,6 @@ app.use(express.json()); // Middleware para parsear JSON
 // Rutas
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/recetas', recetaRoutes);
-app.use('/api/ingredientes', ingredienteRoutes);
 app.use('/api/comentarios', comentarioRoutes);
 app.use('/api/calificaciones', calificacionRoutes);
 
