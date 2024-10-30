@@ -13,7 +13,8 @@ const recetaSchema = new Schema({
     comentarios: [{ type: Schema.Types.ObjectId, ref: 'Comentario' }],
     calificaciones: [{ type: Schema.Types.ObjectId, ref: 'Calificacion' }],
     instrucciones: { type: String, required: true }, // Instrucciones obligatorias
-    imagen: { type: String, required: true } // Imagen obligatoria
+    imagen: { type: String, required: true }, // Imagen obligatoria
+    idCreador: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true } // Referencia al usuario creador
 }, { timestamps: true });
 
 module.exports = mongoose.models.Receta || mongoose.model('Receta', recetaSchema);
