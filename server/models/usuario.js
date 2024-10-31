@@ -7,12 +7,6 @@ const usuarioSchema = new Schema({
     email: { type: String, required: true, unique: true },
     contrasena: { type: String, required: true },  
     restricciones: [{ type: String }], 
-    ingredientes: [
-        {
-            nombre: { type: String, required: true },
-            cantidad: { type: Number, required: true }
-        }
-    ], 
     recetasFavoritas: [{ type: Schema.Types.ObjectId, ref: 'Receta' }], 
     recetasPropias: [{ type: Schema.Types.ObjectId, ref: 'Receta' }], 
 }, { timestamps: true });

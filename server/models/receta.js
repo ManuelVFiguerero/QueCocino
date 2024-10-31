@@ -3,18 +3,13 @@ const { Schema } = mongoose;
 
 const recetaSchema = new Schema({
     nombre: { type: String, required: true },
-    ingredientes: [
-        {
-            nombre: { type: String, required: true },
-            cantidad: { type: Number, required: true }
-        }
-    ],
-    categorias: [{ type: Schema.Types.ObjectId, ref: 'Categoria', required: true }], // Al menos 1 categoría
-    comentarios: [{ type: Schema.Types.ObjectId, ref: 'Comentario' }],
+    ingredientes: [{type: String, required: true}],
+    categorias: [{ type: Schema.Types.ObjectId, ref: 'Categoria', required: true }],
     calificaciones: [{ type: Schema.Types.ObjectId, ref: 'Calificacion' }],
-    instrucciones: { type: String, required: true }, // Instrucciones obligatorias
-    imagen: { type: String, required: true }, // Imagen obligatoria
-    idCreador: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true } // Referencia al usuario creador
+    instrucciones: { type: String, required: true },
+    imagen: { type: String, required: true },
+    idCreador: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true },
+    promedioCalificacion: { type: Number, default: 0 } // Almacena el promedio como un decimal
 }, { timestamps: true });
 
 module.exports = mongoose.models.Receta || mongoose.model('Receta', recetaSchema);

@@ -1,6 +1,7 @@
 const Receta = require('../models/Receta');
 const Categoria = require('../models/Categoria');
 const Usuario = require('../models/Usuario');
+const Calificacion = require('../models/Calificacion');
 
 class RecetaController {
     async agregarReceta(req, res) {
@@ -16,17 +17,10 @@ class RecetaController {
                 });
             }
 
-            // Validar y transformar los ingredientes
-            const ingredientesValidados = ingredientes.map((ingrediente) => {
-                const nombreLimpio = ingrediente.nombre.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '');
-                const cantidad = ingrediente.cantidad;
-
-                if (!nombreLimpio || typeof cantidad !== 'number') {
-                    throw new Error(`Ingrediente inválido: ${JSON.stringify(ingrediente)}`);
-                }
-
-                return { nombre: nombreLimpio.trim(), cantidad };
-            });
+            // Validar y transformar los ingredientes a minúsculas
+            const ingredientesValidados = ingredientes.map(ingrediente => 
+                ingrediente.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '').trim()
+            );
 
             // Buscar categorías en base a los nombres seleccionados
             const categoriasEncontradas = await Categoria.find({
@@ -41,11 +35,11 @@ class RecetaController {
                 return res.status(400).json({ error: 'Una o más categorías seleccionadas no son válidas.' });
             }
 
-            // Crear la receta con las categorías y los ingredientes transformados
+            // Crear la receta con los datos validados
             const nuevaReceta = new Receta({
                 nombre,
                 instrucciones,
-                categorias: categoriasEncontradas.map(categoria => categoria._id), // Guardar solo los IDs de categorías
+                categorias: categoriasEncontradas.map(categoria => categoria._id),
                 imagen,
                 ingredientes: ingredientesValidados,
                 idCreador
@@ -69,11 +63,10 @@ class RecetaController {
 
     async buscarPorFiltros(req, res) {
         try {
-            const { categorias = [], ingredientes = [], idCreador } = req.body; // Asigna valores predeterminados si no se envían
-
+            const { categorias = [], ingredientes = [], idCreador } = req.body;
             console.log("Datos recibidos para buscar recetas:", { categorias, ingredientes, idCreador });
 
-            // Paso 1: Si se envían categorías, obtenemos sus IDs.
+            // Obtener IDs de categorías seleccionadas
             let categoriaIds = [];
             if (categorias.length > 0) {
                 const categoriasEncontradas = await Categoria.find({ nombre: { $in: categorias } });
@@ -81,13 +74,13 @@ class RecetaController {
                 console.log("Categorías seleccionadas (IDs):", categoriaIds);
             }
 
-            // Paso 2: Transformar los ingredientes a minúsculas y eliminar caracteres inválidos
+            // Transformar los ingredientes a minúsculas y sanitizar
             const ingredientesTransformados = ingredientes.map(ing => 
                 ing.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '').trim()
             );
             console.log("Ingredientes transformados:", ingredientesTransformados);
 
-            // Paso 3: Construir el filtro dinámico
+            // Construir el filtro dinámico
             let filtro = {};
 
             if (categoriaIds.length > 0) {
@@ -95,7 +88,7 @@ class RecetaController {
             }
 
             if (ingredientesTransformados.length > 0) {
-                filtro["ingredientes.nombre"] = { $all: ingredientesTransformados };
+                filtro.ingredientes = { $all: ingredientesTransformados };
             }
 
             if (idCreador) {
@@ -104,10 +97,10 @@ class RecetaController {
 
             console.log("Filtro aplicado:", filtro);
 
-            // Paso 4: Buscar recetas con el filtro, o todas las recetas si el filtro está vacío
+            // Buscar recetas aplicando el filtro
             const recetas = await Receta.find(filtro)
-                .populate("categorias", "nombre") // Muestra solo el nombre de las categorías
-                .populate("ingredientes.nombre ingredientes.cantidad"); // Muestra nombre y cantidad de los ingredientes
+                .populate("categorias", "nombre")
+                .populate("ingredientes"); // Sin cantidad
 
             console.log("Recetas encontradas:", recetas);
             res.status(200).json(recetas);
@@ -120,24 +113,35 @@ class RecetaController {
     async eliminarReceta(req, res) {
         try {
             const { idReceta } = req.params;
-
+    
             // Buscar la receta por ID
             const receta = await Receta.findById(idReceta);
-
+    
             if (!receta) {
                 return res.status(404).json({ error: 'Receta no encontrada' });
             }
-
+    
             // Eliminar la receta de la colección de recetas
             await Receta.findByIdAndDelete(idReceta);
-
+    
+            // Eliminar todas las calificaciones asociadas a la receta
+            await Calificacion.deleteMany({ idReceta: idReceta });
+            console.log(`Calificaciones de la receta ${idReceta} eliminadas`);
+    
             // Eliminar la receta de recetasPropias del usuario creador
             await Usuario.findByIdAndUpdate(receta.idCreador, {
                 $pull: { recetasPropias: idReceta }
             });
-
-            console.log(`Receta con ID ${idReceta} eliminada exitosamente y removida de recetasPropias del usuario ${receta.idCreador}`);
-            res.status(200).json({ message: 'Receta eliminada correctamente' });
+            console.log(`Receta removida de recetasPropias del usuario ${receta.idCreador}`);
+    
+            // Eliminar la receta de recetasFavoritas de todos los usuarios
+            await Usuario.updateMany(
+                { recetasFavoritas: idReceta },
+                { $pull: { recetasFavoritas: idReceta } }
+            );
+            console.log(`Receta removida de recetasFavoritas de todos los usuarios`);
+    
+            res.status(200).json({ message: 'Receta y sus asociaciones eliminadas correctamente' });
         } catch (error) {
             console.log("Error al eliminar la receta:", error.message);
             res.status(400).json({ error: error.message });

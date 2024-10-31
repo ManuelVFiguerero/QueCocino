@@ -1,4 +1,6 @@
 const Usuario = require('../models/Usuario');
+const Receta = require('../models/Receta');
+const Calificacion = require('../models/Calificacion');
 const bcrypt = require('bcrypt');
 
 class UsuarioController {
@@ -64,7 +66,30 @@ class UsuarioController {
     async editarUsuario(req, res) {
         try {
             const { idUsuario } = req.params;
-            const usuarioActualizado = await Usuario.findByIdAndUpdate(idUsuario, req.body, { new: true });
+            const { email, contrasena, restricciones } = req.body;
+            const actualizaciones = {};
+
+            if (email) {
+                actualizaciones.email = email;
+            }
+
+            if (contrasena) {
+                const hashedPassword = await bcrypt.hash(contrasena, 10);
+                actualizaciones.contrasena = hashedPassword;
+            }
+
+            if (restricciones) {
+                actualizaciones.restricciones = restricciones.map(restriccion => 
+                    restriccion.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '').trim()
+                );
+            }
+
+            const usuarioActualizado = await Usuario.findByIdAndUpdate(idUsuario, actualizaciones, { new: true });
+
+            if (!usuarioActualizado) {
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+
             console.log("Usuario actualizado exitosamente:", usuarioActualizado);
             res.status(200).json(usuarioActualizado);
         } catch (error) {
@@ -81,7 +106,7 @@ class UsuarioController {
 
             const usuarioActualizado = await Usuario.findByIdAndUpdate(
                 idUsuario,
-                { $addToSet: { recetasFavoritas: idReceta } }, // Evita duplicados
+                { $addToSet: { recetasFavoritas: idReceta } },
                 { new: true }
             );
 
@@ -97,6 +122,67 @@ class UsuarioController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    async eliminarDeFavoritos(req, res) {
+        try {
+            const { idUsuario } = req.body;
+            const { idReceta } = req.params;
+            console.log(`Eliminar receta ${idReceta} de favoritos del usuario ${idUsuario}`);
+    
+            const usuarioActualizado = await Usuario.findByIdAndUpdate(
+                idUsuario,
+                { $pull: { recetasFavoritas: idReceta } },
+                { new: true }
+            );
+    
+            if (!usuarioActualizado) {
+                console.log("Error: Usuario no encontrado");
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+    
+            console.log("Receta eliminada de favoritos exitosamente:", usuarioActualizado);
+            res.status(200).json({ message: 'Receta eliminada de favoritos', usuario: usuarioActualizado });
+        } catch (error) {
+            console.log("Error al eliminar receta de favoritos:", error.message);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async eliminarUsuario(req, res) {
+        try {
+            const { idUsuario } = req.params;
+    
+            // Buscar el usuario antes de eliminarlo para obtener sus recetasPropias
+            const usuario = await Usuario.findById(idUsuario);
+            if (!usuario) {
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+    
+            // Eliminar las recetas y sus calificaciones, y remover de favoritos de otros usuarios
+            for (const recetaId of usuario.recetasPropias) {
+                // Eliminar las calificaciones vinculadas a la receta
+                await Calificacion.deleteMany({ idReceta: recetaId });
+    
+                // Eliminar la receta de la lista de favoritos de otros usuarios
+                await Usuario.updateMany(
+                    { recetasFavoritas: recetaId },
+                    { $pull: { recetasFavoritas: recetaId } }
+                );
+    
+                // Eliminar la receta
+                await Receta.findByIdAndDelete(recetaId);
+            }
+    
+            // Eliminar el usuario después de eliminar sus recetas y calificaciones
+            await Usuario.findByIdAndDelete(idUsuario);
+    
+            console.log(`Usuario con ID ${idUsuario}, sus recetas, calificaciones asociadas, y referencias en favoritos han sido eliminados.`);
+            res.status(200).json({ message: 'Usuario y sus datos asociados eliminados correctamente' });
+        } catch (error) {
+            console.log("Error al eliminar usuario y sus datos:", error.message);
+            res.status(500).json({ error: error.message });
+        }
+    }    
 }
 
 module.exports = new UsuarioController();
