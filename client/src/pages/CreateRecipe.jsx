@@ -138,105 +138,103 @@ const CreateRecipe = () => {
             console.error(error);
         }
     };
-
+    
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 px-4">
             <h1 className="text-4xl font-bold text-brown-600 mb-8 text-center">Crear Receta</h1>
 
-            <div className="flex flex-col lg:flex-row items-center justify-center w-full space-y-8 lg:space-y-0 lg:space-x-8">
-                <div className="relative lg:w-1/2 w-full lg:h-auto mb-4 lg:mb-0 lg:mr-8">
+            <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
+                <div className="mb-6">
                     <label className="block mb-2 font-semibold">Subir Imágenes (Máximo 3)</label>
                     <input 
                         type="file" 
                         accept="image/*"
                         multiple 
                         onChange={handleImageUpload} 
-                        className="mb-4"
+                        className="w-full mb-4"
                     />
                 </div>
 
-                <div className="lg:w-1/2 w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
-                    <div className="mb-6">
-                        <label className="block font-semibold text-xl mb-2">Título de la Receta</label>
+                <div className="mb-6">
+                    <label className="block font-semibold text-xl mb-2">Título de la Receta</label>
+                    <input
+                        type="text"
+                        value={tituloReceta}
+                        onChange={(e) => setTituloReceta(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        required
+                    />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block font-semibold text-xl mb-2">Ingredientes</label>
+                    <div className="flex space-x-2 mb-2">
                         <input
                             type="text"
-                            value={tituloReceta}
-                            onChange={(e) => setTituloReceta(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md"
-                            required
+                            value={ingredienteActual}
+                            onChange={(e) => setIngredienteActual(e.target.value)}
+                            className="flex-grow p-2 border border-gray-300 rounded-md"
                         />
-                    </div>
-
-                    <div className="mb-6">
-                        <label className="block font-semibold text-xl mb-2">Ingredientes</label>
-                        <div className="flex space-x-2 mb-2">
-                            <input
-                                type="text"
-                                value={ingredienteActual}
-                                onChange={(e) => setIngredienteActual(e.target.value)}
-                                className="flex-grow p-2 border border-gray-300 rounded-md"
-                            />
-                            <button 
-                                type="button" 
-                                onClick={agregarIngrediente} 
-                                className="bg-brown text-white px-4 py-2 rounded-full"
-                            >
-                                Agregar
-                            </button>
-                        </div>
-                        <ul className="list-disc list-inside">
-                            {ingredientes.map((ingrediente, index) => (
-                                <li key={index} className="flex justify-between items-center">
-                                    <span>{ingrediente}</span>
-                                    <button 
-                                        onClick={() => eliminarIngrediente(index)} 
-                                        className="text-red-500 hover:text-red-700"
-                                    >
-                                        Eliminar
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className="mb-6">
-                        <label className="block font-semibold text-xl mb-2">Instrucciones</label>
-                        <textarea
-                            value={instrucciones}
-                            onChange={(e) => setInstrucciones(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md"
-                            rows="4"
-                            required
-                        />
-                    </div>
-
-                    <div className="mb-6">
-                        <label className="block font-semibold text-xl mb-2">Restricciones/Alimentaciones (Opcional)</label>
-                        <div className="flex flex-wrap gap-2">
-                            {restriccionesDisponibles.map((restriccion) => (
-                                <button
-                                    key={restriccion._id}
-                                    onClick={() => toggleRestriccion(restriccion.nombre)}
-                                    className={`flex items-center px-3 py-1 rounded-full ${getColor(restriccion.nombre)} text-sm font-semibold ${
-                                        restriccionesSeleccionadas.includes(restriccion.nombre) ? 'ring-2 ring-offset-2' : ''
-                                    }`}
-                                >
-                                    {getIcon(restriccion.nombre)}
-                                    {restriccion.nombre}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="text-center">
                         <button 
-                            type="submit" 
-                            onClick={handleSubmit}
-                            className="bg-brown text-white px-6 py-3 rounded-full hover:bg-brown-700 transition duration-200"
+                            type="button" 
+                            onClick={agregarIngrediente} 
+                            className="bg-brown text-white px-4 py-2 rounded-full"
                         >
-                            Publicar Receta
+                            Agregar
                         </button>
                     </div>
+                    <ul className="list-disc list-inside">
+                        {ingredientes.map((ingrediente, index) => (
+                            <li key={index} className="flex justify-between items-center">
+                                <span>{ingrediente}</span>
+                                <button 
+                                    onClick={() => eliminarIngrediente(index)} 
+                                    className="text-red-500 hover:text-red-700"
+                                >
+                                    Eliminar
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="mb-6">
+                    <label className="block font-semibold text-xl mb-2">Instrucciones</label>
+                    <textarea
+                        value={instrucciones}
+                        onChange={(e) => setInstrucciones(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                        rows="4"
+                        required
+                    />
+                </div>
+
+                <div className="mb-6">
+                    <label className="block font-semibold text-xl mb-2">Restricciones/Alimentaciones (Opcional)</label>
+                    <div className="flex flex-wrap gap-2">
+                        {restriccionesDisponibles.map((restriccion) => (
+                            <button
+                                key={restriccion._id}
+                                onClick={() => toggleRestriccion(restriccion.nombre)}
+                                className={`flex items-center px-3 py-1 rounded-full ${getColor(restriccion.nombre)} text-sm font-semibold ${
+                                    restriccionesSeleccionadas.includes(restriccion.nombre) ? 'ring-2 ring-offset-2' : ''
+                                }`}
+                            >
+                                {getIcon(restriccion.nombre)}
+                                {restriccion.nombre}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="text-center">
+                    <button 
+                        type="submit" 
+                        onClick={handleSubmit}
+                        className="bg-brown text-white px-6 py-3 rounded-full hover:bg-brown-700 transition duration-200"
+                    >
+                        Publicar Receta
+                    </button>
                 </div>
             </div>
         </div>

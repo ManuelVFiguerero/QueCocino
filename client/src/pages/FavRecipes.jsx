@@ -342,7 +342,7 @@ const FavRecipes = () => {
             <div className="mt-2 text-center">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     {visibleRecipes.map((recipe, index) => (
-                        <RecipeCard key={index} recipe={recipe} />
+                        <RecipeCard key={index} recipe={recipe} isFavRecipes={true} />
                     ))}
                 </div>
             </div>
