@@ -2,22 +2,38 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Modal from '../components/Modal';
 import CalificationCard from '../components/CalificationCard';
-import { FaLeaf, FaBreadSlice } from 'react-icons/fa'; // Cambié FaWheat por FaBreadSlice
+import { FaLeaf, FaBreadSlice } from 'react-icons/fa';
+import { agregarAFavoritos } from '../api'; // Importa la función para agregar a favoritos
+import { useAuth } from '../components/AuthContext'; // Para obtener el ID del usuario autenticado
 
 const RecipeDetails = () => {
     const location = useLocation(); 
     const { recipe } = location.state || {}; 
-
-    // Estado para controlar la imagen actual
+    const { isAuthenticated, user } = useAuth(); // Para obtener el usuario autenticado
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    // Estado para manejar el modal
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // Lista de imágenes (puedes añadir más cuando las tengas)
     const images = recipe?.image || []; // Asegúrate de que `images` esté definido
 
-    // Función para cambiar la imagen
+    const handleGuardarReceta = async () => {
+        if (!isAuthenticated || !user) {
+            alert('Por favor, inicia sesión para guardar la receta.');
+            return;
+        }
+
+        try {
+            console.log("Intentando guardar receta en favoritos...");
+            console.log("ID de usuario:", user._id); // user._id debería existir si `user` está definido correctamente
+            console.log("ID de receta:", recipe._id);
+
+            await agregarAFavoritos(user._id, recipe._id); // Asegúrate de que `user._id` y `recipe._id` existan
+            alert('Receta guardada en favoritos.');
+        } catch (error) {
+            console.error('Error al guardar la receta en favoritos:', error);
+            alert('Hubo un error al guardar la receta.');
+        }
+    };
+
+    // Función para cambiar la imagen (previa/siguiente)
     const changeImage = (direction) => {
         if (direction === 'next') {
             setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -26,7 +42,6 @@ const RecipeDetails = () => {
         }
     };
 
-    // Si no se encuentra la receta, mostrar un mensaje
     if (!recipe) {
         return <p>No se encontró la receta.</p>;
     }
@@ -137,7 +152,12 @@ const RecipeDetails = () => {
 
                 {/* Botones */}
                 <div className="flex flex-col lg:flex-row justify-around space-y-4 lg:space-y-0 lg:space-x-4">
-                    <button className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-700 transition duration-200">Guardar Receta</button>
+                    <button 
+                        className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-700 transition duration-200"
+                        onClick={handleGuardarReceta} // Vincula con la función
+                    >
+                        Guardar Receta
+                    </button>
                     <button 
                         className="bg-white text-brown px-5 py-2 rounded-full border border-brown hover:bg-brown-100 transition duration-200"
                         onClick={() => setIsModalOpen(true)} // Abre el modal
@@ -147,17 +167,17 @@ const RecipeDetails = () => {
                 </div>
             </div>
 
-            {/* Modal con la tarjeta de calificación */}
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                <CalificationCard onSubmit={(calificationData) => {
-                    console.log('Datos de calificación:', calificationData);
-                    setIsModalOpen(false); // Cerrar el modal después de enviar la calificación
-                }} />
+                <CalificationCard 
+                    onSubmit={(calificationData) => {
+                        console.log('Datos de calificación:', calificationData);
+                        setIsModalOpen(false);
+                    }}
+                    recipeId={recipe._id} // Pasa el ID de la receta
+                />
             </Modal>
         </div>
     );
 };
 
 export default RecipeDetails;
-
-

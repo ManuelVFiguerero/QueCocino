@@ -56,12 +56,18 @@ class UsuarioController {
             }
     
             console.log("Inicio de sesión exitoso para el usuario:", usuario.email);
-            res.status(200).json({ message: 'Inicio de sesión exitoso' });
+    
+            // Devuelve también el `userID` en la respuesta
+            res.status(200).json({ 
+                message: 'Inicio de sesión exitoso', 
+                usuario: { _id: usuario._id, email: usuario.email }, // Asegúrate de incluir el `userID` 
+                token: "token_generado_aqui" // Incluye un token si es necesario
+            });
         } catch (error) {
             console.log("Error en el inicio de sesión:", error.message);
             res.status(500).json({ error: error.message });
         }
-    }
+    }    
 
     async editarUsuario(req, res) {
         try {

@@ -2,13 +2,25 @@ const Receta = require('../models/Receta');
 const Categoria = require('../models/Categoria');
 const Usuario = require('../models/Usuario');
 const Calificacion = require('../models/Calificacion');
+const cloudinary = require('../config/cloudinaryConfig');
 
 class RecetaController {
+    async obtenerCategorias(req, res) {
+        try {
+            const categorias = await Categoria.find(); // Esto depende de cómo estés guardando las categorías
+            res.status(200).json(categorias);
+        } catch (error) {
+            console.error("Error al obtener categorías:", error);
+            res.status(500).json({ error: 'Error al obtener categorías' });
+        }
+    }
+    
     async agregarReceta(req, res) {
         try {
-            const { nombre, instrucciones, categorias, imagen, ingredientes, idCreador } = req.body;
+            const { nombre, instrucciones, categorias, ingredientes, idCreador, imagen } = req.body;
+    
             console.log("Datos recibidos para crear receta:", req.body);
-
+    
             // Validar campos requeridos
             if (!nombre || !instrucciones || !categorias || categorias.length === 0 || !imagen || !idCreador) {
                 console.log("Error: Campos requeridos faltantes");
@@ -16,51 +28,37 @@ class RecetaController {
                     error: 'Los campos "nombre", "instrucciones", "categorias" (al menos una), "imagen" e "idCreador" son obligatorios.' 
                 });
             }
-
-            // Validar y transformar los ingredientes a minúsculas
-            const ingredientesValidados = ingredientes.map(ingrediente => 
-                ingrediente.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '').trim()
-            );
-
-            // Buscar categorías en base a los nombres seleccionados
-            const categoriasEncontradas = await Categoria.find({
-                nombre: { $in: categorias }
-            });
-
-            console.log("Categorías encontradas:", categoriasEncontradas);
-
-            // Verificar que todas las categorías solicitadas existen en la base de datos
-            if (categoriasEncontradas.length !== categorias.length) {
-                console.log("Error: Algunas categorías no existen en la base de datos");
-                return res.status(400).json({ error: 'Una o más categorías seleccionadas no son válidas.' });
-            }
-
-            // Crear la receta con los datos validados
+    
+            // Transformar los ingredientes a minúsculas
+            const ingredientesValidados = Array.isArray(ingredientes)
+                ? ingredientes.map(ingrediente => ingrediente.toLowerCase().trim())
+                : [ingredientes.toLowerCase().trim()];
+    
+            // Crear la receta con los datos validados, usando nombres de categorías
             const nuevaReceta = new Receta({
                 nombre,
                 instrucciones,
-                categorias: categoriasEncontradas.map(categoria => categoria._id),
-                imagen,
+                categorias, // Guardar nombres de las categorías directamente
+                imagen: Array.isArray(imagen) ? imagen : [imagen],
                 ingredientes: ingredientesValidados,
                 idCreador
             });
-
+    
             await nuevaReceta.save();
             console.log("Receta creada exitosamente:", nuevaReceta);
-
+    
             // Agregar la receta a las recetasPropias del usuario
             await Usuario.findByIdAndUpdate(idCreador, {
                 $push: { recetasPropias: nuevaReceta._id }
             });
-
-            console.log(`Receta agregada a recetasPropias del usuario con ID: ${idCreador}`);
+    
             res.status(201).json(nuevaReceta);
         } catch (error) {
             console.log("Error al crear la receta:", error.message);
             res.status(400).json({ error: error.message });
         }
-    }
-
+    }  
+    
     async buscarPorFiltros(req, res) {
         try {
             const { categorias = [], ingredientes = [], idCreador } = req.body;

@@ -1,33 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaLeaf, FaBreadSlice, FaGlassWhiskey, FaCarrot, FaDrumstickBite, FaSeedling } from 'react-icons/fa'; // Íconos para las restricciones
+import { FaLeaf, FaBreadSlice, FaGlassWhiskey, FaCarrot, FaDrumstickBite, FaSeedling } from 'react-icons/fa';
+import { agregarReceta, obtenerCategorias } from '../api';
+import { useAuth } from '../components/AuthContext';
 
 const CreateRecipe = () => {
     const navigate = useNavigate();
+    const { user } = useAuth();
+
     const [tituloReceta, setTituloReceta] = useState('');
-    const [autor] = useState('Nombre Fijo'); // Autocompletado fijo
+    const [autor] = useState('Nombre Fijo');
     const [ingredientes, setIngredientes] = useState([]);
     const [ingredienteActual, setIngredienteActual] = useState('');
     const [instrucciones, setInstrucciones] = useState('');
     const [restriccionesSeleccionadas, setRestriccionesSeleccionadas] = useState([]);
     const [imagenes, setImagenes] = useState([]);
+    const [restriccionesDisponibles, setRestriccionesDisponibles] = useState([]);
 
-    // Lista de restricciones alimentarias disponibles
-    const restriccionesDisponibles = [
-        { id: 'vegano', label: 'Apto Vegano', icon: <FaLeaf className="inline-block mr-1" />, color: 'bg-green-100 text-green-600' },
-        { id: 'celiaco', label: 'Sin TACC', icon: <FaBreadSlice className="inline-block mr-1" />, color: 'bg-red-100 text-red-600' },
-        { id: 'sinLactosa', label: 'Sin Lactosa', icon: <FaGlassWhiskey className="inline-block mr-1" />, color: 'bg-blue-100 text-blue-600' },
-        { id: 'vegetariano', label: 'Apto Vegetariano', icon: <FaCarrot className="inline-block mr-1" />, color: 'bg-green-200 text-green-700' },
-        { id: 'keto', label: 'Keto', icon: <FaDrumstickBite className="inline-block mr-1" />, color: 'bg-orange-100 text-orange-600' },
-        { id: 'sinFrutosSecos', label: 'Sin Frutos Secos', icon: <FaSeedling className="inline-block mr-1" />, color: 'bg-brown-100 text-brown-600' }
-    ];
+    useEffect(() => {
+        const fetchCategorias = async () => {
+            try {
+                const categorias = await obtenerCategorias();
+                setRestriccionesDisponibles(categorias);
+            } catch (error) {
+                console.error("Error al obtener las categorías:", error);
+            }
+        };
 
-    // Agregar o quitar restricciones seleccionadas
-    const toggleRestriccion = (id) => {
-        if (restriccionesSeleccionadas.includes(id)) {
-            setRestriccionesSeleccionadas(restriccionesSeleccionadas.filter((restriccion) => restriccion !== id));
+        fetchCategorias();
+    }, []);
+
+    const getIcon = (label) => {
+        switch (label) {
+            case 'Apto Vegano': return <FaLeaf className="inline-block mr-1" />;
+            case 'Sin TACC': return <FaBreadSlice className="inline-block mr-1" />;
+            case 'Sin Lactosa': return <FaGlassWhiskey className="inline-block mr-1" />;
+            case 'Apto Vegetariano': return <FaCarrot className="inline-block mr-1" />;
+            case 'Keto': return <FaDrumstickBite className="inline-block mr-1" />;
+            case 'Sin Frutos Secos': return <FaSeedling className="inline-block mr-1" />;
+            default: return null;
+        }
+    };
+
+    const getColor = (label) => {
+        switch (label) {
+            case 'Apto Vegano': return 'bg-green-100 text-green-600';
+            case 'Sin TACC': return 'bg-red-100 text-red-600';
+            case 'Sin Lactosa': return 'bg-blue-100 text-blue-600';
+            case 'Apto Vegetariano': return 'bg-green-200 text-green-700';
+            case 'Keto': return 'bg-orange-100 text-orange-600';
+            case 'Sin Frutos Secos': return 'bg-brown-100 text-brown-600';
+            default: return 'bg-gray-100 text-gray-600';
+        }
+    };
+
+    const toggleRestriccion = (nombre) => {
+        if (restriccionesSeleccionadas.includes(nombre)) {
+            setRestriccionesSeleccionadas(restriccionesSeleccionadas.filter((restriccion) => restriccion !== nombre));
         } else {
-            setRestriccionesSeleccionadas([...restriccionesSeleccionadas, id]);
+            setRestriccionesSeleccionadas([...restriccionesSeleccionadas, nombre]);
         }
     };
 
@@ -51,25 +82,61 @@ const CreateRecipe = () => {
         }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const uploadImageToCloudinary = async (image) => {
+        const formData = new FormData();
+        formData.append('file', image);
+        formData.append('upload_preset', 'queCocino');
+        formData.append('cloud_name', 'dinvffn4v');
+    
+        try {
+            const response = await fetch(`https://api.cloudinary.com/v1_1/dinvffn4v/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            return data.secure_url;
+        } catch (error) {
+            console.error("Error al subir la imagen a Cloudinary:", error);
+            throw error;
+        }
+    };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
         if (!tituloReceta || !ingredientes.length || !instrucciones || !imagenes.length) {
             alert('Por favor, completa todos los campos requeridos.');
             return;
         }
-
-        const nuevaReceta = {
-            tituloReceta,
-            autor,
-            ingredientes,
-            instrucciones,
-            restricciones: restriccionesSeleccionadas, // Las restricciones seleccionadas
-            imagenes,
-        };
-
-        console.log('Receta publicada:', nuevaReceta);
-        navigate('/myrecipes');
+    
+        try {
+            const imagenUrls = await Promise.all(imagenes.map(image => uploadImageToCloudinary(image)));
+    
+            const formData = new FormData();
+            formData.append('nombre', tituloReceta);
+            formData.append('autor', autor);
+            formData.append('instrucciones', instrucciones);
+            formData.append('idCreador', user._id);
+            
+            ingredientes.forEach((ingrediente, index) => {
+                formData.append(`ingredientes[${index}]`, ingrediente);
+            });
+    
+            restriccionesSeleccionadas.forEach((restriccion, index) => {
+                formData.append(`categorias[${index}]`, restriccion);
+            });
+    
+            imagenUrls.forEach((url, index) => {
+                formData.append(`imagen[${index}]`, url);
+            });
+    
+            await agregarReceta(formData);
+            alert('Receta publicada con éxito.');
+            navigate('/myrecipes');
+        } catch (error) {
+            alert('Hubo un error al publicar la receta.');
+            console.error(error);
+        }
     };
 
     return (
@@ -86,16 +153,6 @@ const CreateRecipe = () => {
                         onChange={handleImageUpload} 
                         className="mb-4"
                     />
-                    <div className="flex space-x-2">
-                        {imagenes.map((imagen, index) => (
-                            <img
-                                key={index}
-                                src={URL.createObjectURL(imagen)}
-                                alt={`Imagen ${index + 1}`}
-                                className="w-24 h-24 object-cover rounded-lg shadow-lg"
-                            />
-                        ))}
-                    </div>
                 </div>
 
                 <div className="lg:w-1/2 w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg">
@@ -158,14 +215,14 @@ const CreateRecipe = () => {
                         <div className="flex flex-wrap gap-2">
                             {restriccionesDisponibles.map((restriccion) => (
                                 <button
-                                    key={restriccion.id}
-                                    onClick={() => toggleRestriccion(restriccion.id)}
-                                    className={`flex items-center px-3 py-1 rounded-full ${restriccion.color} text-sm font-semibold ${
-                                        restriccionesSeleccionadas.includes(restriccion.id) ? 'ring-2 ring-offset-2' : ''
+                                    key={restriccion._id}
+                                    onClick={() => toggleRestriccion(restriccion.nombre)}
+                                    className={`flex items-center px-3 py-1 rounded-full ${getColor(restriccion.nombre)} text-sm font-semibold ${
+                                        restriccionesSeleccionadas.includes(restriccion.nombre) ? 'ring-2 ring-offset-2' : ''
                                     }`}
                                 >
-                                    {restriccion.icon}
-                                    {restriccion.label}
+                                    {getIcon(restriccion.nombre)}
+                                    {restriccion.nombre}
                                 </button>
                             ))}
                         </div>

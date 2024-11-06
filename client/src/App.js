@@ -12,8 +12,8 @@ import MyRecipes from "./pages/MyRecipes";
 import AboutUs from './pages/AboutUs';
 import EditRecipe from './pages/EditRecipe';
 import CreateRecipe from './pages/CreateRecipe';
-import { AuthProvider } from './components/AuthContext';  // Importamos el AuthProvider
-import PrivateRoute from './components/PrivateRoute';  // Usamos la ruta privada
+import { AuthProvider } from './components/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
     return (

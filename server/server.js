@@ -1,5 +1,6 @@
 // server.js
 const express = require('express');
+const cors = require('cors'); // Importar CORS
 const connectDB = require('./config/db');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const recetaRoutes = require('./routes/recetaRoutes');
@@ -10,6 +11,7 @@ require('dotenv').config();
 const app = express();
 connectDB(); // Conectar a MongoDB
 
+app.use(cors()); // Habilitar CORS para todas las solicitudes
 app.use(express.json()); // Middleware para parsear JSON
 
 // Rutas
