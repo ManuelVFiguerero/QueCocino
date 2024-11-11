@@ -79,11 +79,26 @@ export const obtenerCategorias = async () => {
   }
 };
 
+// Buscar recetas por filtros
+export const buscarRecetas = async (ingredientes, categorias) => {
+  try {
+    const response = await axios.post(`${API_URL}/recetas/buscar`, {
+      ingredientes,
+      categorias,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar recetas:', error);
+    throw error;
+  }
+};
+
 export default {
   iniciarSesion,
   registrarUsuario,
   agregarAFavoritos,
   agregarCalificacion,
   agregarReceta,
-  obtenerCategorias, // Exportar la función para obtener categorías
+  obtenerCategorias,
+  buscarRecetas, // Exportar la función para buscar recetas
 };

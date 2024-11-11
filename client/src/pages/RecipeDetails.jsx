@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom'; // Importamos useNavigate
 import Modal from '../components/Modal';
 import CalificationCard from '../components/CalificationCard';
 import { FaLeaf, FaBreadSlice } from 'react-icons/fa';
@@ -8,6 +8,7 @@ import { useAuth } from '../components/AuthContext'; // Para obtener el ID del u
 
 const RecipeDetails = () => {
     const location = useLocation(); 
+    const navigate = useNavigate(); // Inicializamos useNavigate
     const { recipe } = location.state || {}; 
     const { isAuthenticated, user } = useAuth(); // Para obtener el usuario autenticado
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -75,6 +76,14 @@ const RecipeDetails = () => {
 
     return (
         <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8"> 
+            {/* Botón de regreso */}
+            <button 
+                onClick={() => navigate(-1)} // Navega a la página anterior
+                className="absolute top-4 left-4 bg-white text-brown px-3 py-1 rounded-full border border-brown hover:bg-brown-100 transition duration-200"
+            >
+                ← Volver
+            </button>
+
             {/* Contenedor de la imagen con carrusel */}
             <div className="relative lg:w-1/2 w-full lg:h-auto mb-4 lg:mb-0 lg:mr-8">
                 <img 

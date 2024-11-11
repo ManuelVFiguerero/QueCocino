@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../components/AuthContext';
 import SearchBar from '../components/SearchBar';
 import RecipeCard from '../components/RecipeCard';
 import logo from '../assets/logo.png';
-import DefaultGrid from '../components/DefaultGrid'; // Asegúrate de tener este componente
-import SearchGrid from '../components/SearchGrid'; // Asegúrate de tener este componente
+import DefaultGrid from '../components/DefaultGrid';
+import SearchGrid from '../components/SearchGrid';
+import { buscarRecetas } from '../api'; // Importamos la función de búsqueda en el backend
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeaf, faBreadSlice, faTint, faCarrot, faFire, faBan } from '@fortawesome/free-solid-svg-icons';
 
@@ -11,6 +14,11 @@ const Home = () => {
     const [ingredientes, setIngredientes] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
+    const [searchResults, setSearchResults] = useState(null);
+    const [showDefaultRecipes, setShowDefaultRecipes] = useState(true); // Nuevo estado para mostrar recetas hardcoded
+
+    const { isAuthenticated } = useAuth();
+    const navigate = useNavigate();
 
     const toggleFilter = (filter) => {
         if (selectedFilters.includes(filter)) {
@@ -28,6 +36,7 @@ const Home = () => {
         { name: 'Keto', icon: faFire, color: 'bg-orange-200 text-orange-800' },
         { name: 'Sin Frutos Secos', icon: faBan, color: 'bg-brown-200 text-brown-800' },
     ];
+
     const recetas = [
         {
             tituloReceta: "Pasta de Almendra",
@@ -331,15 +340,32 @@ const Home = () => {
         setIngredientes(ingredientes.filter(ingredient => ingredient !== ingredientToRemove));
     };
 
+    const executeSearch = async () => {
+        if (!isAuthenticated) {
+            navigate('/login');
+            return;
+        }
+
+        console.log("Ejecutando búsqueda con ingredientes:", ingredientes);
+        console.log("Ejecutando búsqueda con restricciones:", selectedFilters);
+
+        try {
+            const results = await buscarRecetas(ingredientes, selectedFilters);
+            console.log("Resultados de búsqueda:", results);
+            setSearchResults(results);
+            setShowDefaultRecipes(false); // Ocultar recetas hardcoded
+        } catch (error) {
+            console.error("Error al buscar recetas:", error);
+        }
+    };
+
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200">
             <img src={logo} alt="Logo Que Cocino" className="w-32 mb-4" />
             <h1 className="text-4xl font-bold text-brown-600 mb-4">Buscar Recetas</h1>
             
-            
-
             {/* Search Bar */}
-            <SearchBar onSearch={addIngredient} />
+            <SearchBar onSearch={addIngredient} onExecuteSearch={executeSearch} />
             
             {/* Ingredientes seleccionados */}
             <div className="flex flex-wrap mt-4">
@@ -355,8 +381,9 @@ const Home = () => {
                     </div>
                 ))}
             </div>
-{/* Botón Filtros */}
-<button 
+            
+            {/* Botón Filtros */}
+            <button 
                 onClick={() => setShowFilters(!showFilters)} 
                 className="mb-4 bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-700 transition duration-200"
             >
@@ -380,11 +407,12 @@ const Home = () => {
                     ))}
                 </div>
             )}
-            {/* Grid de recetas según los ingredientes */}
-            {ingredientes.length === 0 ? (
+            
+            {/* Grid de recetas */}
+            {showDefaultRecipes ? (
                 <DefaultGrid recetas={recetas} />
             ) : (
-                <SearchGrid allRecetas={recetas} selectedFilters={selectedFilters} />
+                <SearchGrid allRecetas={searchResults} selectedFilters={selectedFilters} />
             )}
         </div>
     );

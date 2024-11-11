@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const images = recipe.image;
+    const images = recipe.imagen && recipe.imagen.length > 0 ? recipe.imagen : ['ruta_de_imagen_por_defecto.png']; // Imagen de respaldo
 
     const changeImage = (direction) => {
         if (direction === 'next') {
@@ -15,14 +15,12 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
 
     return (
         <div className="border rounded-lg p-4 mb-4 bg-white shadow-lg w-80 flex flex-col relative">
-            
             <div className="relative w-full h-48 overflow-hidden">
                 <img 
                     src={images[currentImageIndex]} 
                     className="w-full h-full object-cover rounded" 
                     alt="Recipe"
                 />
-
                 <button 
                     onClick={() => changeImage('prev')} 
                     className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white bg-gray-700 bg-opacity-50 hover:bg-opacity-75 px-2 py-1 rounded-full"
@@ -35,7 +33,6 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
                 >
                     ›
                 </button>
-
                 <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2">
                     {images.map((_, index) => (
                         <span 
@@ -46,7 +43,7 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
                 </div>
             </div>
 
-            <h2 className="text-lg font-semibold text-center mt-2">{recipe.tituloReceta}</h2>
+            <h2 className="text-lg font-semibold text-center mt-2">{recipe.nombre}</h2>
             <p className="text-center mb-4 text-sm">{recipe.autor}</p>
             <p className="text-center mb-4 text-sm flex-grow">{recipe.descripcion}</p> 
 
@@ -54,7 +51,7 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
                 {isMyRecipes ? (
                     <>
                         <button 
-                            onClick={() => console.log('Eliminar receta', recipe.id)} 
+                            onClick={() => console.log('Eliminar receta', recipe._id)} 
                             className="bg-red-600 text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 transition duration-200"
                         >
                             Eliminar
@@ -70,14 +67,14 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
                 ) : (
                     isFavRecipes ? (
                         <button 
-                            onClick={() => console.log('Eliminar de favoritos', recipe.id)} 
+                            onClick={() => console.log('Eliminar de favoritos', recipe._id)} 
                             className="bg-red-600 text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 transition duration-200"
                         >
                             Eliminar
                         </button>
                     ) : (
                         <button 
-                            onClick={() => console.log('Guardar receta', recipe.id)} 
+                            onClick={() => console.log('Guardar receta', recipe._id)} 
                             className="bg-white text-brown text-xs px-3 py-1 rounded-full border border-brown hover:bg-brown-100 transition duration-200"
                         >
                             Guardar

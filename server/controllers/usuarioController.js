@@ -1,7 +1,7 @@
 const Usuario = require('../models/Usuario');
 const Receta = require('../models/Receta');
 const Calificacion = require('../models/Calificacion');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 class UsuarioController {
     async registrarUsuario(req, res) {
