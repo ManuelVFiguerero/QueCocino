@@ -29,10 +29,20 @@ class RecetaController {
                 });
             }
     
-            // Transformar los ingredientes a minúsculas
+            // Función para remover tildes y caracteres especiales
+            const sanitizeString = (str) => {
+                return str
+                    .normalize("NFD") // Descompone caracteres especiales
+                    .replace(/[\u0300-\u036f]/g, "") // Elimina las marcas diacríticas (tildes, etc.)
+                    .replace(/[^a-z\s]/gi, '') // Elimina cualquier carácter que no sea una letra o espacio
+                    .toLowerCase()
+                    .trim();
+            };
+    
+            // Transformar y sanitizar los ingredientes
             const ingredientesValidados = Array.isArray(ingredientes)
-                ? ingredientes.map(ingrediente => ingrediente.toLowerCase().trim())
-                : [ingredientes.toLowerCase().trim()];
+                ? ingredientes.map(ingrediente => sanitizeString(ingrediente))
+                : [sanitizeString(ingredientes)];
     
             // Crear la receta con los datos validados, usando nombres de categorías
             const nuevaReceta = new Receta({
@@ -57,7 +67,7 @@ class RecetaController {
             console.log("Error al crear la receta:", error.message);
             res.status(400).json({ error: error.message });
         }
-    }  
+    }    
     
     async buscarPorFiltros(req, res) {
         try {
