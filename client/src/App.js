@@ -14,6 +14,7 @@ import EditRecipe from './pages/EditRecipe';
 import CreateRecipe from './pages/CreateRecipe';
 import { AuthProvider } from './components/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import MyProfile from './pages/myProfile';
 
 const App = () => {
     return (
@@ -29,6 +30,7 @@ const App = () => {
                     <Route path="/RecoverPassword" element={<RecoverPassword />} />
 
                     {/* Rutas protegidas */}
+                    <Route path="/profile" element={<PrivateRoute><MyProfile /></PrivateRoute>} /> 
                     <Route path="/recipedetails" element={<PrivateRoute><RecipeDetails /></PrivateRoute>} /> 
                     <Route path="/favrecipes" element={<PrivateRoute><FavRecipes /></PrivateRoute>} /> 
                     <Route path="/myrecipes" element={<PrivateRoute><MyRecipes /></PrivateRoute>} />
