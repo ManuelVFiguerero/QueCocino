@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import logo from '../assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faKey, faSignOutAlt, faTrashAlt, faCheck, faLeaf, faBreadSlice, faTint, faCarrot, faFire, faNut } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faKey, faSignOutAlt, faTrashAlt, faLeaf, faBreadSlice, faTint, faCarrot, faFire } from '@fortawesome/free-solid-svg-icons';
 
 const MyProfile = () => {
   const [name, setName] = useState("NombreActual");
   const [preferences, setPreferences] = useState({
     vegetarian: false,
     vegan: true,
-    celiac: true,
+    celiac: false,
     keto: false,
     lactoseFree: false,
   });
@@ -40,12 +40,13 @@ const MyProfile = () => {
     console.log("Preferencias confirmadas:", preferences);
   };
 
+  // Opciones de preferencias con iconos y colores
   const preferenceOptions = [
-    { name: 'vegetarian', label: 'Apto Vegetariano', color: 'bg-green-200 text-green-800', icon: faCarrot },
-    { name: 'vegan', label: 'Apto Vegano', color: 'bg-green-100 text-green-700', icon: faLeaf },
-    { name: 'celiac', label: 'Sin TACC', color: 'bg-red-200 text-red-800', icon: faBreadSlice },
-    { name: 'keto', label: 'Keto', color: 'bg-orange-200 text-orange-800', icon: faFire },
-    { name: 'lactoseFree', label: 'Sin Lactosa', color: 'bg-blue-200 text-blue-800', icon: faTint },
+    { name: 'vegetarian', label: 'Apto Vegetariano', icon: faCarrot, color: 'bg-green-200 text-green-800', inactiveColor: 'bg-gray-200 text-gray-600' },
+    { name: 'vegan', label: 'Apto Vegano', icon: faLeaf, color: 'bg-green-100 text-green-700', inactiveColor: 'bg-gray-200 text-gray-600' },
+    { name: 'celiac', label: 'Sin TACC', icon: faBreadSlice, color: 'bg-red-200 text-red-800', inactiveColor: 'bg-gray-200 text-gray-600' },
+    { name: 'keto', label: 'Keto', icon: faFire, color: 'bg-orange-200 text-orange-800', inactiveColor: 'bg-gray-200 text-gray-600' },
+    { name: 'lactoseFree', label: 'Sin Lactosa', icon: faTint, color: 'bg-blue-200 text-blue-800', inactiveColor: 'bg-gray-200 text-gray-600' },
   ];
 
   return (
@@ -71,21 +72,21 @@ const MyProfile = () => {
           />
           <button
             onClick={handleNameChange}
-            className="bg-brown-700 text-white px-3 py-2 rounded-full mb-3 hover:bg-brown-800 transition duration-200 flex items-center space-x-2"
+            className="bg-brown text-white px-3 py-2 rounded-full mb-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2"
           >
             <FontAwesomeIcon icon={faEdit} />
             <span>Cambiar Nombre</span>
           </button>
           <button
             onClick={handlePasswordChange}
-            className="bg-brown-700 text-white px-3 py-2 rounded-full mb-3 hover:bg-brown-800 transition duration-200 flex items-center space-x-2"
+            className="bg-brown text-white px-3 py-2 rounded-full mb-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2"
           >
             <FontAwesomeIcon icon={faKey} />
             <span>Cambiar Contraseña</span>
           </button>
           <button
             onClick={handleLogout}
-            className="bg-red-700 text-white px-3 py-2 rounded-full mb-3 hover:bg-red-800 transition duration-200 flex items-center space-x-2"
+            className="bg-red-700 text-white px-3 py-2 rounded-full mb-4 hover:bg-red-800 transition duration-200 flex items-center space-x-2"
           >
             <FontAwesomeIcon icon={faSignOutAlt} />
             <span>Cerrar Sesión</span>
@@ -102,23 +103,24 @@ const MyProfile = () => {
         {/* Sección de preferencias */}
         <div className="flex flex-col items-center">
           <h2 className="text-2xl font-semibold mb-4">Preferencias</h2>
-          <div className="flex flex-wrap gap-2">
-            {preferenceOptions.map(({ name, label, color, icon }) => (
+          <div className="space-y-2">
+            {preferenceOptions.map((preference) => (
               <button
-                key={name}
-                onClick={() => handlePreferenceChange(name)}
-                className={`${color} flex items-center space-x-2 px-3 py-2 rounded-full transition duration-200`}
+                key={preference.name}
+                onClick={() => handlePreferenceChange(preference.name)}
+                className={`flex items-center px-4 py-2 rounded-full space-x-2 ${
+                  preferences[preference.name] ? preference.color : preference.inactiveColor
+                }`}
               >
-                <FontAwesomeIcon icon={icon} />
-                <span>{label}</span>
+                <FontAwesomeIcon icon={preference.icon} />
+                <span>{preference.label}</span>
               </button>
             ))}
           </div>
           <button
             onClick={confirmPreferences}
-            className="bg-brown-700 text-white px-3 py-2 rounded-full mt-4 hover:bg-brown-800 transition duration-200 flex items-center space-x-2"
+            className="bg-brown text-white px-4 py-2 rounded-full mt-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2"
           >
-            <FontAwesomeIcon icon={faCheck} />
             <span>Confirmar Preferencias</span>
           </button>
         </div>
