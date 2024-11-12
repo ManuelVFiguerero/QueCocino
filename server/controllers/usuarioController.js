@@ -57,17 +57,21 @@ class UsuarioController {
     
             console.log("Inicio de sesión exitoso para el usuario:", usuario.email);
     
-            // Devuelve también el `userID` en la respuesta
+            // Devuelve también el campo restricciones en la respuesta
             res.status(200).json({ 
                 message: 'Inicio de sesión exitoso', 
-                usuario: { _id: usuario._id, email: usuario.email }, // Asegúrate de incluir el `userID` 
+                usuario: { 
+                    _id: usuario._id, 
+                    email: usuario.email, 
+                    restricciones: usuario.restricciones // Incluye las restricciones aquí
+                }, 
                 token: "token_generado_aqui" // Incluye un token si es necesario
             });
         } catch (error) {
             console.log("Error en el inicio de sesión:", error.message);
             res.status(500).json({ error: error.message });
         }
-    }    
+    }       
 
     async editarUsuario(req, res) {
         try {
@@ -101,6 +105,23 @@ class UsuarioController {
         } catch (error) {
             console.log("Error al actualizar usuario:", error.message);
             res.status(400).json({ error: error.message });
+        }
+    }
+
+    // Obtener recetas favoritas de un usuario
+    async obtenerRecetasFavoritas(req, res) {
+        try {
+            const { idUsuario } = req.params;
+            const usuario = await Usuario.findById(idUsuario).populate('recetasFavoritas');
+            
+            if (!usuario) {
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+
+            res.status(200).json(usuario.recetasFavoritas);
+        } catch (error) {
+            console.log("Error al obtener recetas favoritas:", error.message);
+            res.status(500).json({ error: error.message });
         }
     }
 
@@ -188,7 +209,21 @@ class UsuarioController {
             console.log("Error al eliminar usuario y sus datos:", error.message);
             res.status(500).json({ error: error.message });
         }
-    }    
+    }
+    
+    async obtenerUsuario(req, res) {
+        try {
+            const { idUsuario } = req.params;
+            const usuario = await Usuario.findById(idUsuario, 'nombre email restricciones'); // Incluye restricciones en lugar de preferencias
+            if (!usuario) {
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+            res.status(200).json(usuario);
+        } catch (error) {
+            console.log("Error al obtener usuario:", error.message);
+            res.status(500).json({ error: error.message });
+        }
+    }       
 }
 
 module.exports = new UsuarioController();

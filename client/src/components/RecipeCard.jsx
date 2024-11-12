@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { agregarAFavoritos } from '../api'; // Importa la función de agregar a favoritos
+import { useAuth } from '../components/AuthContext'; // Asegúrate de que tienes un contexto de autenticación
 
 const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const { user } = useAuth(); // Obtener información de usuario
     const images = recipe.imagen && recipe.imagen.length > 0 ? recipe.imagen : ['ruta_de_imagen_por_defecto.png']; // Imagen de respaldo
 
     const changeImage = (direction) => {
@@ -10,6 +13,20 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
             setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
         } else {
             setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+        }
+    };
+
+    const handleGuardarClick = async () => {
+        if (user && user._id) {
+            try {
+                await agregarAFavoritos(user._id, recipe._id); // Llama al método con el ID del usuario y la receta
+                alert('Receta agregada a favoritos');
+            } catch (error) {
+                console.error('Error al agregar receta a favoritos:', error);
+                alert('Hubo un error al guardar la receta');
+            }
+        } else {
+            alert('Inicia sesión para guardar recetas en tus favoritos');
         }
     };
 
@@ -74,7 +91,7 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
                         </button>
                     ) : (
                         <button 
-                            onClick={() => console.log('Guardar receta', recipe._id)} 
+                            onClick={handleGuardarClick} 
                             className="bg-white text-brown text-xs px-3 py-1 rounded-full border border-brown hover:bg-brown-100 transition duration-200"
                         >
                             Guardar

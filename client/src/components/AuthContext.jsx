@@ -1,6 +1,5 @@
-// src/components/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { iniciarSesion, setAuthToken } from '../api'; // Importa setAuthToken aquí
+import { iniciarSesion, setAuthToken } from '../api';
 
 const AuthContext = createContext();
 
@@ -10,35 +9,45 @@ export const useAuth = () => useContext(AuthContext);
 // Proveedor de contexto para envolver la aplicación
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState(null); // Estado para almacenar el usuario
+    const [user, setUser] = useState(null);
 
-    // AuthProvider en AuthContext.jsx
     const login = async (email, contrasena) => {
         try {
             const response = await iniciarSesion(email, contrasena);
             console.log('Respuesta de inicio de sesión:', response);
 
             setIsAuthenticated(true);
-            setUser(response.usuario); // Asegúrate de que `response.usuario` contenga `_id`
+            setUser({
+                _id: response.usuario._id,
+                email: response.usuario.email,
+                restricciones: response.usuario.restricciones || [] // Incluye restricciones directamente
+            });
 
-            // Almacenar token y userID en localStorage si es necesario
             localStorage.setItem('token', response.token);
-            localStorage.setItem('userID', response.usuario._id); // Guardar el `userID` en localStorage
-            setAuthToken(response.token); // Configura el token en axios
+            localStorage.setItem('userID', response.usuario._id);
+            setAuthToken(response.token);
         } catch (error) {
             console.error('Error en la autenticación:', error);
             throw error;
         }
     };
 
-
-    // Función para cerrar sesión
     const logout = () => {
         setIsAuthenticated(false);
-        setUser(null); // Limpia el usuario
-        // Si tienes un token en localStorage, puedes eliminarlo aquí
-        // localStorage.removeItem('token');
+        setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('userID');
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userID = localStorage.getItem('userID');
+        if (token && userID) {
+            setAuthToken(token);
+            setIsAuthenticated(true);
+            // Aquí podríamos hacer una solicitud para obtener el usuario completo, incluyendo restricciones
+        }
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
@@ -46,3 +55,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+export default AuthContext;

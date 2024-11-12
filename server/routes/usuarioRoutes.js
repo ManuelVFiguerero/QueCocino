@@ -8,5 +8,7 @@ router.put('/editar/:idUsuario', UsuarioController.editarUsuario);
 router.post('/favoritos', UsuarioController.agregarAFavoritos);
 router.delete('/favoritos/:idReceta', UsuarioController.eliminarDeFavoritos);
 router.delete('/eliminar/:idUsuario', UsuarioController.eliminarUsuario);
+router.get('/:idUsuario', UsuarioController.obtenerUsuario);
+router.get('/:idUsuario/favoritos', UsuarioController.obtenerRecetasFavoritas);
 
 module.exports = router;

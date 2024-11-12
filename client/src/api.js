@@ -93,6 +93,77 @@ export const buscarRecetas = async (ingredientes, categorias) => {
   }
 };
 
+// Obtener información de usuario
+export const obtenerUsuario = async (userId) => {
+  try {
+    const response = await axios.get(`${API_URL}/usuarios/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener información del usuario:', error);
+    throw error;
+  }
+};
+
+// Editar usuario
+export const editarUsuario = async (userId, data) => {
+  try {
+    const response = await axios.put(`${API_URL}/usuarios/editar/${userId}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error al editar el usuario:', error);
+    throw error;
+  }
+};
+
+// Eliminar usuario
+export const eliminarUsuario = async (userId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/usuarios/eliminar/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar el usuario:', error);
+    throw error;
+  }
+};
+
+// Buscar recetas por filtros
+export const buscarRecetas = async (ingredientes = [], categorias = [], idCreador = null) => {
+  try {
+    const response = await axios.post(`${API_URL}/recetas/buscar`, {
+      ingredientes,
+      categorias,
+      idCreador,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar recetas:', error);
+    throw error;
+  }
+};
+
+// Obtener recetas favoritas del usuario
+export const obtenerRecetasFavoritas = async (idUsuario) => {
+  try {
+    const response = await axios.get(`${API_URL}/usuarios/${idUsuario}/favoritos`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener recetas favoritas:', error);
+    throw error;
+  }
+};
+
+
+// Agregar una receta a favoritos
+export const agregarAFavoritos = async (idUsuario, idReceta) => {
+  try {
+    const response = await axios.post(`${API_URL}/usuarios/favoritos`, { idUsuario, idReceta });
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar receta a favoritos:', error);
+    throw error;
+  }
+};
+
 export default {
   iniciarSesion,
   registrarUsuario,
@@ -100,5 +171,11 @@ export default {
   agregarCalificacion,
   agregarReceta,
   obtenerCategorias,
-  buscarRecetas, // Exportar la función para buscar recetas
+  buscarRecetas,
+  obtenerUsuario,
+  editarUsuario,
+  eliminarUsuario,
+  buscarRecetas,
+  obtenerRecetasFavoritas,
+  agregarAFavoritos,
 };
