@@ -11,5 +11,6 @@ router.get('/categorias', RecetaController.obtenerCategorias);
 router.post('/buscar', RecetaController.buscarPorFiltros);
 router.post('/agregar', upload.array('imagen', 3), RecetaController.agregarReceta); // Acepta hasta 3 imágenes
 router.delete('/eliminar/:idReceta', RecetaController.eliminarReceta);
+router.get('/:idReceta', RecetaController.obtenerRecetaPorId);
 
 module.exports = router;

@@ -67,7 +67,25 @@ class RecetaController {
             console.log("Error al crear la receta:", error.message);
             res.status(400).json({ error: error.message });
         }
-    }    
+    }
+    
+    async obtenerRecetaPorId(req, res) {
+        try {
+            const { idReceta } = req.params;
+            const receta = await Receta.findById(idReceta)
+                .populate('categorias', 'nombre')  // Esto es opcional, depende de tus necesidades
+                .populate('ingredientes');  // Esto también depende de tus necesidades
+
+            if (!receta) {
+                return res.status(404).json({ error: 'Receta no encontrada' });
+            }
+
+            res.status(200).json(receta);
+        } catch (error) {
+            console.error("Error al obtener la receta:", error.message);
+            res.status(500).json({ error: error.message });
+        }
+    }
     
     async buscarPorFiltros(req, res) {
         try {

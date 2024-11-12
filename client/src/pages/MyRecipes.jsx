@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import logo from '../assets/logo.png';
 import { useAuth } from '../components/AuthContext';
-import { buscarRecetas } from '../api';
+import { obtenerRecetaPorId, obtenerUsuario } from '../api';
 
 const MyRecipes = () => {
     const { user } = useAuth();
@@ -12,11 +12,18 @@ const MyRecipes = () => {
     useEffect(() => {
         const fetchUserRecipes = async () => {
             try {
-                // Verifica que el usuario esté en sesión y obtén sus recetas
+                // Verifica que el usuario esté en sesión y obtén sus recetas propias (IDs)
                 if (user && user._id) {
-                    const recetas = await buscarRecetas([], [], user._id);
+                    const usuarioData = await obtenerUsuario(user._id);
+                    const recetasIds = usuarioData.recetasPropias; // Array de ObjectId de las recetas propias
+
+                    // Obtener detalles de cada receta usando los IDs
+                    const recetasDetalles = await Promise.all(
+                        recetasIds.map((idReceta) => obtenerRecetaPorId(idReceta))
+                    );
+
                     // Mostrar solo las primeras `recipesToShow` recetas al cargar la página
-                    setVisibleRecipes(recetas.slice(0, recipesToShow));
+                    setVisibleRecipes(recetasDetalles.slice(0, recipesToShow));
                 }
             } catch (error) {
                 console.error("Error al obtener recetas del usuario:", error);

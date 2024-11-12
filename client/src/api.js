@@ -33,17 +33,6 @@ export const registrarUsuario = async (usuarioData) => {
   }
 };
 
-// Agregar una receta a favoritos
-export const agregarAFavoritos = async (idUsuario, idReceta) => {
-  try {
-    const response = await axios.post(`${API_URL}/usuarios/favoritos`, { idUsuario, idReceta });
-    return response.data;
-  } catch (error) {
-    console.error('Error al agregar receta a favoritos:', error);
-    throw error;
-  }
-};
-
 export const agregarCalificacion = async (idUsuario, idReceta, valor, comentario) => {
   try {
     const response = await axios.post(`${API_URL}/calificaciones/agregar/${idReceta}`, {
@@ -126,21 +115,6 @@ export const eliminarUsuario = async (userId) => {
   }
 };
 
-// Buscar recetas por filtros
-export const buscarRecetas = async (ingredientes = [], categorias = [], idCreador = null) => {
-  try {
-    const response = await axios.post(`${API_URL}/recetas/buscar`, {
-      ingredientes,
-      categorias,
-      idCreador,
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error al buscar recetas:', error);
-    throw error;
-  }
-};
-
 // Obtener recetas favoritas del usuario
 export const obtenerRecetasFavoritas = async (idUsuario) => {
   try {
@@ -164,6 +138,17 @@ export const agregarAFavoritos = async (idUsuario, idReceta) => {
   }
 };
 
+// Obtener una receta por su ID
+export const obtenerRecetaPorId = async (idReceta) => {
+  try {
+    const response = await axios.get(`${API_URL}/recetas/${idReceta}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener receta:', error);
+    throw error;
+  }
+};
+
 export default {
   iniciarSesion,
   registrarUsuario,
@@ -175,7 +160,7 @@ export default {
   obtenerUsuario,
   editarUsuario,
   eliminarUsuario,
-  buscarRecetas,
   obtenerRecetasFavoritas,
   agregarAFavoritos,
+  obtenerRecetaPorId,
 };

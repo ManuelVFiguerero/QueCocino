@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // Importamos useNavigate
 import Modal from '../components/Modal';
 import CalificationCard from '../components/CalificationCard';
-import { FaLeaf, FaBreadSlice } from 'react-icons/fa';
+import { FaLeaf, FaBreadSlice, FaTint, FaCarrot, FaFireAlt } from 'react-icons/fa'; // Importación de iconos adicionales
 import { agregarAFavoritos } from '../api'; // Importa la función para agregar a favoritos
 import { useAuth } from '../components/AuthContext'; // Para obtener el ID del usuario autenticado
 
@@ -13,7 +13,11 @@ const RecipeDetails = () => {
     const { isAuthenticated, user } = useAuth(); // Para obtener el usuario autenticado
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const images = recipe?.image || []; // Asegúrate de que `images` esté definido
+
+    // Definimos las imágenes con una imagen de respaldo
+    const images = recipe?.image && recipe.image.length > 0 
+        ? recipe.image 
+        : ['ruta_de_imagen_por_defecto.png']; // Imagen de respaldo
 
     const handleGuardarReceta = async () => {
         if (!isAuthenticated || !user) {
@@ -50,12 +54,19 @@ const RecipeDetails = () => {
     // Obtener el estilo y el ícono para cada restricción
     const getRestrictionStyle = (restriccion) => {
         switch (restriccion.toLowerCase()) {
-            case 'apto celiaco':
+            case 'sin tacc':
                 return {
                     icon: <FaBreadSlice className="inline-block mr-1" />,
                     bgColor: 'bg-red-100',
                     textColor: 'text-red-600',
                     label: 'Sin TACC',
+                };
+            case 'sin lactosa':
+                return {
+                    icon: <FaTint className="inline-block mr-1" />,
+                    bgColor: 'bg-blue-100',
+                    textColor: 'text-blue-600',
+                    label: 'Sin Lactosa',
                 };
             case 'apto vegano':
                 return {
@@ -63,6 +74,20 @@ const RecipeDetails = () => {
                     bgColor: 'bg-green-100',
                     textColor: 'text-green-600',
                     label: 'Apto Vegano',
+                };
+            case 'apto vegetariano':
+                return {
+                    icon: <FaCarrot className="inline-block mr-1" />,
+                    bgColor: 'bg-green-100',
+                    textColor: 'text-green-700',
+                    label: 'Apto Vegetariano',
+                };
+            case 'keto':
+                return {
+                    icon: <FaFireAlt className="inline-block mr-1" />,
+                    bgColor: 'bg-orange-100',
+                    textColor: 'text-orange-600',
+                    label: 'Keto',
                 };
             default:
                 return {
@@ -128,7 +153,7 @@ const RecipeDetails = () => {
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold">Ingredientes</h2>
                     <ul className="list-disc list-inside text-lg mt-2">
-                        {recipe.ingredientes.map((ingrediente, index) => (
+                        {recipe.ingredientes && recipe.ingredientes.map((ingrediente, index) => (
                             <li key={index}>{ingrediente}</li>
                         ))}
                     </ul>
@@ -144,7 +169,7 @@ const RecipeDetails = () => {
                 <div className="mb-6">
                     <h2 className="text-xl font-semibold">Restricciones/Alimentaciones</h2>
                     <div className="flex space-x-2">
-                        {recipe.restricciones.map((restriccion, index) => {
+                        {recipe.restricciones && recipe.restricciones.map((restriccion, index) => {
                             const { icon, bgColor, textColor, label } = getRestrictionStyle(restriccion);
                             return (
                                 <span 
