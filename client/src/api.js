@@ -149,6 +149,18 @@ export const obtenerRecetaPorId = async (idReceta) => {
   }
 };
 
+export const eliminarDeFavoritos = async (idUsuario, idReceta) => {
+  try {
+    const response = await axios.delete(`${API_URL}/usuarios/favoritos/${idReceta}`, {
+      data: { idUsuario }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar receta de favoritos:', error);
+    throw error;
+  }
+};
+
 export default {
   iniciarSesion,
   registrarUsuario,
@@ -163,4 +175,5 @@ export default {
   obtenerRecetasFavoritas,
   agregarAFavoritos,
   obtenerRecetaPorId,
+  eliminarDeFavoritos,
 };

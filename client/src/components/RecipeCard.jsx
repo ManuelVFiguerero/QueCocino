@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { agregarAFavoritos } from '../api'; // Importa la función de agregar a favoritos
-import { useAuth } from '../components/AuthContext'; // Asegúrate de que tienes un contexto de autenticación
+import { agregarAFavoritos, eliminarDeFavoritos } from '../api'; // Importa la función de eliminar de favoritos
+import { useAuth } from '../components/AuthContext';
 
-const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
+const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelete }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { user } = useAuth(); // Obtener información de usuario
     const images = recipe.imagen && recipe.imagen.length > 0 ? recipe.imagen : ['ruta_de_imagen_por_defecto.png']; // Imagen de respaldo
@@ -27,6 +27,21 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
             }
         } else {
             alert('Inicia sesión para guardar recetas en tus favoritos');
+        }
+    };
+
+    const handleEliminarDeFavoritos = async () => {
+        if (user && user._id) {
+            try {
+                await eliminarDeFavoritos(user._id, recipe._id); // Llama al método con el ID del usuario y la receta
+                alert('Receta eliminada de favoritos');
+                if (onDelete) onDelete(recipe._id); // Llama a onDelete para actualizar el estado en FavRecipes
+            } catch (error) {
+                console.error('Error al eliminar receta de favoritos:', error);
+                alert('Hubo un error al eliminar la receta de favoritos');
+            }
+        } else {
+            alert('Inicia sesión para gestionar tus favoritos');
         }
     };
 
@@ -84,7 +99,7 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false }) => {
                 ) : (
                     isFavRecipes ? (
                         <button 
-                            onClick={() => console.log('Eliminar de favoritos', recipe._id)} 
+                            onClick={handleEliminarDeFavoritos} 
                             className="bg-red-600 text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 transition duration-200"
                         >
                             Eliminar

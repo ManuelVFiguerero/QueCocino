@@ -214,7 +214,9 @@ class UsuarioController {
     async obtenerUsuario(req, res) {
         try {
             const { idUsuario } = req.params;
-            const usuario = await Usuario.findById(idUsuario, 'nombre email restricciones'); // Incluye restricciones en lugar de preferencias
+            const usuario = await Usuario.findById(idUsuario, 'nombre email restricciones')
+                .populate('recetasPropias'); // Incluye los detalles completos de recetasPropias
+
             if (!usuario) {
                 return res.status(404).json({ error: 'Usuario no encontrado' });
             }
@@ -223,7 +225,7 @@ class UsuarioController {
             console.log("Error al obtener usuario:", error.message);
             res.status(500).json({ error: error.message });
         }
-    }       
+    }
 }
 
 module.exports = new UsuarioController();

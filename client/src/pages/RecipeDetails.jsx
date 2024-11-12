@@ -7,7 +7,7 @@ import { agregarAFavoritos } from '../api'; // Importa la función para agregar 
 import { useAuth } from '../components/AuthContext'; // Para obtener el ID del usuario autenticado
 
 const RecipeDetails = () => {
-    const location = useLocation(); 
+    const location = useLocation();
     const navigate = useNavigate(); // Inicializamos useNavigate
     const { recipe } = location.state || {}; 
     const { isAuthenticated, user } = useAuth(); // Para obtener el usuario autenticado

@@ -12,26 +12,19 @@ const MyRecipes = () => {
     useEffect(() => {
         const fetchUserRecipes = async () => {
             try {
-                // Verifica que el usuario esté en sesión y obtén sus recetas propias (IDs)
                 if (user && user._id) {
                     const usuarioData = await obtenerUsuario(user._id);
-                    const recetasIds = usuarioData.recetasPropias; // Array de ObjectId de las recetas propias
-
-                    // Obtener detalles de cada receta usando los IDs
-                    const recetasDetalles = await Promise.all(
-                        recetasIds.map((idReceta) => obtenerRecetaPorId(idReceta))
-                    );
-
-                    // Mostrar solo las primeras `recipesToShow` recetas al cargar la página
-                    setVisibleRecipes(recetasDetalles.slice(0, recipesToShow));
+                    console.log("Datos del usuario obtenidos:", usuarioData); // Verifica que `recetasPropias` esté en los datos
+    
+                    setVisibleRecipes(usuarioData.recetasPropias.slice(0, recipesToShow)); // Usa directamente recetasPropias
                 }
             } catch (error) {
                 console.error("Error al obtener recetas del usuario:", error);
             }
         };
-
+    
         fetchUserRecipes();
-    }, [user, recipesToShow]);
+    }, [user, recipesToShow]);     
 
     // Función para cargar más recetas
     const loadMoreRecipes = () => {
