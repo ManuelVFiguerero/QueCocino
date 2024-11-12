@@ -76,37 +76,50 @@ class UsuarioController {
     async editarUsuario(req, res) {
         try {
             const { idUsuario } = req.params;
-            const { email, contrasena, restricciones } = req.body;
+            const { email, contrasenaActual, contrasenaNueva, restricciones } = req.body;
             const actualizaciones = {};
-
+    
             if (email) {
                 actualizaciones.email = email;
             }
-
-            if (contrasena) {
-                const hashedPassword = await bcrypt.hash(contrasena, 10);
+    
+            if (contrasenaActual && contrasenaNueva) {
+                // Obtener el usuario para verificar la contraseña actual
+                const usuario = await Usuario.findById(idUsuario);
+                if (!usuario) {
+                    return res.status(404).json({ error: 'Usuario no encontrado' });
+                }
+    
+                // Verificar la contraseña actual
+                const contrasenaValida = await bcrypt.compare(contrasenaActual, usuario.contrasena);
+                if (!contrasenaValida) {
+                    return res.status(401).json({ error: 'La contraseña actual es incorrecta' });
+                }
+    
+                // Hashear la nueva contraseña
+                const hashedPassword = await bcrypt.hash(contrasenaNueva, 10);
                 actualizaciones.contrasena = hashedPassword;
             }
-
+    
             if (restricciones) {
                 actualizaciones.restricciones = restricciones.map(restriccion => 
                     restriccion.toLowerCase().replace(/[^a-záéíóúüñ\s]/g, '').trim()
                 );
             }
-
+    
             const usuarioActualizado = await Usuario.findByIdAndUpdate(idUsuario, actualizaciones, { new: true });
-
+    
             if (!usuarioActualizado) {
                 return res.status(404).json({ error: 'Usuario no encontrado' });
             }
-
+    
             console.log("Usuario actualizado exitosamente:", usuarioActualizado);
-            res.status(200).json(usuarioActualizado);
+            res.status(200).json({ success: true, usuario: usuarioActualizado });
         } catch (error) {
             console.log("Error al actualizar usuario:", error.message);
             res.status(400).json({ error: error.message });
         }
-    }
+    }    
 
     // Obtener recetas favoritas de un usuario
     async obtenerRecetasFavoritas(req, res) {

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { iniciarSesion, setAuthToken } from '../api';
+import { iniciarSesion, setAuthToken, renovarToken } from '../api';
 
 const AuthContext = createContext();
 
@@ -10,6 +10,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
+    const [tokenExpiration, setTokenExpiration] = useState(null);
 
     const login = async (email, contrasena) => {
         try {
@@ -23,8 +24,12 @@ export const AuthProvider = ({ children }) => {
                 restricciones: response.usuario.restricciones || [] // Incluye restricciones directamente
             });
 
+            // Guardar token y tiempo de expiración
             localStorage.setItem('token', response.token);
             localStorage.setItem('userID', response.usuario._id);
+            const expirationTime = Date.now() + 60 * 60 * 1000; // 1 hora de expiración, ajusta según sea necesario
+            localStorage.setItem('tokenExpiration', expirationTime);
+            setTokenExpiration(expirationTime);
             setAuthToken(response.token);
         } catch (error) {
             console.error('Error en la autenticación:', error);
@@ -37,17 +42,58 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         localStorage.removeItem('token');
         localStorage.removeItem('userID');
+        localStorage.removeItem('tokenExpiration');
+        setAuthToken(null);
+    };
+
+    const checkTokenExpiration = async () => {
+        const expiration = localStorage.getItem('tokenExpiration');
+        if (expiration && Date.now() > expiration) {
+            console.log('Token expirado. Renovando...');
+            await renovarToken(); // Asegúrate de tener un endpoint para renovar el token en tu API
+        }
+    };
+
+    const renovarToken = async () => {
+        try {
+            const response = await renovarToken();
+            if (response.token) {
+                localStorage.setItem('token', response.token);
+                const newExpirationTime = Date.now() + 60 * 60 * 1000;
+                localStorage.setItem('tokenExpiration', newExpirationTime);
+                setTokenExpiration(newExpirationTime);
+                setAuthToken(response.token);
+            }
+        } catch (error) {
+            console.error('Error al renovar el token:', error);
+            logout(); // Cierra sesión si no se puede renovar el token
+        }
     };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         const userID = localStorage.getItem('userID');
-        if (token && userID) {
-            setAuthToken(token);
-            setIsAuthenticated(true);
-            // Aquí podríamos hacer una solicitud para obtener el usuario completo, incluyendo restricciones
+        const expiration = localStorage.getItem('tokenExpiration');
+        if (token && userID && expiration) {
+            if (Date.now() < expiration) {
+                setAuthToken(token);
+                setIsAuthenticated(true);
+                setTokenExpiration(expiration);
+                // Podrías aquí obtener información del usuario si es necesario
+            } else {
+                logout(); // Cierra sesión si el token ha expirado
+            }
         }
     }, []);
+
+    // Monitorea el tiempo restante del token y renueva antes de expirar
+    useEffect(() => {
+        if (tokenExpiration) {
+            const timeLeft = tokenExpiration - Date.now();
+            const timeoutId = setTimeout(checkTokenExpiration, timeLeft - 5000); // Renueva 5 segundos antes de expirar
+            return () => clearTimeout(timeoutId);
+        }
+    }, [tokenExpiration]);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>

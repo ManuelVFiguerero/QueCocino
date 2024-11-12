@@ -45,6 +45,11 @@ const FavRecipes = () => {
         };
     }, []);
 
+    // Función para manejar la eliminación de recetas de la lista de favoritos
+    const handleDeleteFavorite = (recipeId) => {
+        setFavoriteRecipes((prevRecipes) => prevRecipes.filter(recipe => recipe._id !== recipeId));
+    };
+
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200">
             <img src={logo} alt="Logo Que Cocino" className="w-32 mb-4" />
@@ -53,7 +58,12 @@ const FavRecipes = () => {
             <div className="mt-2 text-center">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     {favoriteRecipes.map((recipe, index) => (
-                        <RecipeCard key={index} recipe={recipe} isFavRecipes={true} />
+                        <RecipeCard 
+                            key={index} 
+                            recipe={recipe} 
+                            isFavRecipes={true} 
+                            onDelete={handleDeleteFavorite} // Pasa la función handleDeleteFavorite como onDelete
+                        />
                     ))}
                 </div>
             </div>

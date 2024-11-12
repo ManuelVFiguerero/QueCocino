@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RecipeCard from '../components/RecipeCard';
 import logo from '../assets/logo.png';
 import { useAuth } from '../components/AuthContext';
-import { obtenerRecetaPorId, obtenerUsuario } from '../api';
+import { obtenerUsuario } from '../api';
 
 const MyRecipes = () => {
     const { user } = useAuth();
@@ -34,7 +34,6 @@ const MyRecipes = () => {
     // Detectar el scroll al fondo de la página
     useEffect(() => {
         const handleScroll = () => {
-            // Verificar si el usuario ha llegado al fondo de la página
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
                 loadMoreRecipes(); // Cargar más recetas cuando llega al final del scroll
             }
@@ -42,11 +41,15 @@ const MyRecipes = () => {
 
         window.addEventListener('scroll', handleScroll);
 
-        // Cleanup del event listener cuando el componente se desmonte
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+
+    // Función para manejar la eliminación de recetas de la lista visible
+    const handleDeleteRecipe = (recipeId) => {
+        setVisibleRecipes((prevRecipes) => prevRecipes.filter(recipe => recipe._id !== recipeId));
+    };
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200">
@@ -57,7 +60,12 @@ const MyRecipes = () => {
             <div className="mt-2 text-center">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     {visibleRecipes.map((recipe, index) => (
-                        <RecipeCard key={index} recipe={recipe} isMyRecipes={true} />
+                        <RecipeCard 
+                            key={index} 
+                            recipe={recipe} 
+                            isMyRecipes={true} 
+                            onDelete={handleDeleteRecipe} // Pasa la función handleDeleteRecipe como onDelete
+                        />
                     ))}
                 </div>
             </div>

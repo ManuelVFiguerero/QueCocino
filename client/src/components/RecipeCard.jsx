@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { agregarAFavoritos, eliminarDeFavoritos } from '../api'; // Importa la función de eliminar de favoritos
+import { agregarAFavoritos, eliminarDeFavoritos, eliminarReceta } from '../api';
 import { useAuth } from '../components/AuthContext';
 
 const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelete }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const { user } = useAuth(); // Obtener información de usuario
-    const images = recipe.imagen && recipe.imagen.length > 0 ? recipe.imagen : ['ruta_de_imagen_por_defecto.png']; // Imagen de respaldo
+    const { user } = useAuth();
+    const images = recipe.imagen && recipe.imagen.length > 0 ? recipe.imagen : ['ruta_de_imagen_por_defecto.png'];
 
     const changeImage = (direction) => {
         if (direction === 'next') {
@@ -19,7 +19,7 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelet
     const handleGuardarClick = async () => {
         if (user && user._id) {
             try {
-                await agregarAFavoritos(user._id, recipe._id); // Llama al método con el ID del usuario y la receta
+                await agregarAFavoritos(user._id, recipe._id);
                 alert('Receta agregada a favoritos');
             } catch (error) {
                 console.error('Error al agregar receta a favoritos:', error);
@@ -33,15 +33,30 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelet
     const handleEliminarDeFavoritos = async () => {
         if (user && user._id) {
             try {
-                await eliminarDeFavoritos(user._id, recipe._id); // Llama al método con el ID del usuario y la receta
+                await eliminarDeFavoritos(user._id, recipe._id);
                 alert('Receta eliminada de favoritos');
-                if (onDelete) onDelete(recipe._id); // Llama a onDelete para actualizar el estado en FavRecipes
+                if (onDelete) onDelete(recipe._id); // Actualiza el estado en FavRecipes
             } catch (error) {
                 console.error('Error al eliminar receta de favoritos:', error);
                 alert('Hubo un error al eliminar la receta de favoritos');
             }
         } else {
             alert('Inicia sesión para gestionar tus favoritos');
+        }
+    };
+
+    const handleEliminarReceta = async () => {
+        if (user && user._id) {
+            try {
+                await eliminarReceta(recipe._id);
+                alert('Receta eliminada correctamente');
+                if (onDelete) onDelete(recipe._id); // Actualiza el estado en MyRecipes
+            } catch (error) {
+                console.error('Error al eliminar receta:', error);
+                alert('Hubo un error al eliminar la receta');
+            }
+        } else {
+            alert('Inicia sesión para gestionar tus recetas');
         }
     };
 
@@ -83,7 +98,7 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelet
                 {isMyRecipes ? (
                     <>
                         <button 
-                            onClick={() => console.log('Eliminar receta', recipe._id)} 
+                            onClick={handleEliminarReceta} 
                             className="bg-red-600 text-white text-xs px-3 py-1 rounded-full hover:bg-red-700 transition duration-200"
                         >
                             Eliminar

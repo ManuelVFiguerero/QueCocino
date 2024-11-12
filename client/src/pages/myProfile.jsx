@@ -7,7 +7,9 @@ import { editarUsuario, eliminarUsuario } from '../api';
 
 const MyProfile = () => {
   const { user, logout } = useAuth();
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [newName, setNewName] = useState('');
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [showNamePopup, setShowNamePopup] = useState(false);
@@ -19,15 +21,14 @@ const MyProfile = () => {
     lactoseFree: false,
   });
 
-  // Cargar restricciones del usuario cuando el perfil se carga
   useEffect(() => {
     if (user && user.restricciones) {
       setPreferences({
-        vegetarian: user.restricciones.includes('Apto Vegetariano'),
-        vegan: user.restricciones.includes('Apto Vegano'),
-        celiac: user.restricciones.includes('Sin TACC'),
-        keto: user.restricciones.includes('Keto'),
-        lactoseFree: user.restricciones.includes('Sin Lactosa'),
+        vegetarian: user.restricciones.some((r) => r.trim().toLowerCase() === 'apto vegetariano'),
+        vegan: user.restricciones.some((r) => r.trim().toLowerCase() === 'apto vegano'),
+        celiac: user.restricciones.some((r) => r.trim().toLowerCase() === 'sin tacc'),
+        keto: user.restricciones.some((r) => r.trim().toLowerCase() === 'keto'),
+        lactoseFree: user.restricciones.some((r) => r.trim().toLowerCase() === 'sin lactosa'),
       });
     }
   }, [user]);
@@ -51,10 +52,23 @@ const MyProfile = () => {
   };
 
   const handlePasswordChange = async () => {
+    if (newPassword !== confirmNewPassword) {
+      alert('La nueva contraseña y su confirmación no coinciden.');
+      return;
+    }
+    if (newPassword === currentPassword) {
+      alert('La nueva contraseña no puede ser igual a la actual.');
+      return;
+    }
+
     try {
-      await editarUsuario(user._id, { contrasena: newPassword });
-      setShowPasswordPopup(false);
-      alert('Contraseña actualizada correctamente.');
+      const response = await editarUsuario(user._id, { contrasenaActual: currentPassword, contrasenaNueva: newPassword });
+      if (response.success) {
+        setShowPasswordPopup(false);
+        alert('Contraseña actualizada correctamente.');
+      } else {
+        alert(response.message || 'Error al actualizar la contraseña');
+      }
     } catch (error) {
       console.error('Error al cambiar la contraseña:', error);
       alert('Hubo un error al cambiar la contraseña.');
@@ -93,11 +107,11 @@ const MyProfile = () => {
   };
 
   const preferenceOptions = [
-    { name: 'vegetarian', label: 'Apto Vegetariano', icon: faCarrot, color: 'bg-green-200 text-green-800', inactiveColor: 'bg-gray-200 text-gray-600' },
-    { name: 'vegan', label: 'Apto Vegano', icon: faLeaf, color: 'bg-green-100 text-green-700', inactiveColor: 'bg-gray-200 text-gray-600' },
-    { name: 'celiac', label: 'Sin TACC', icon: faBreadSlice, color: 'bg-red-200 text-red-800', inactiveColor: 'bg-gray-200 text-gray-600' },
-    { name: 'keto', label: 'Keto', icon: faFire, color: 'bg-orange-200 text-orange-800', inactiveColor: 'bg-gray-200 text-gray-600' },
-    { name: 'lactoseFree', label: 'Sin Lactosa', icon: faTint, color: 'bg-blue-200 text-blue-800', inactiveColor: 'bg-gray-200 text-gray-600' },
+    { name: 'vegetarian', label: 'Apto Vegetariano', icon: faCarrot, color: 'bg-green-300 text-green-800' },
+    { name: 'vegan', label: 'Apto Vegano', icon: faLeaf, color: 'bg-green-200 text-green-800' },
+    { name: 'celiac', label: 'Sin TACC', icon: faBreadSlice, color: 'bg-red-200 text-red-800' },
+    { name: 'keto', label: 'Keto', icon: faFire, color: 'bg-orange-200 text-orange-800' },
+    { name: 'lactoseFree', label: 'Sin Lactosa', icon: faTint, color: 'bg-blue-200 text-blue-800' },
   ];
 
   return (
@@ -115,31 +129,19 @@ const MyProfile = () => {
             disabled
             className="bg-gray-200 text-gray-600 text-center rounded mb-4 w-64"
           />
-          <button
-            onClick={() => setShowNamePopup(true)}
-            className="bg-brown text-white px-3 py-2 rounded-full mb-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2"
-          >
+          <button onClick={() => setShowNamePopup(true)} className="bg-brown text-white px-3 py-2 rounded-full mb-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2">
             <FontAwesomeIcon icon={faEdit} />
             <span>Cambiar Nombre</span>
           </button>
-          <button
-            onClick={() => setShowPasswordPopup(true)}
-            className="bg-brown text-white px-3 py-2 rounded-full mb-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2"
-          >
+          <button onClick={() => setShowPasswordPopup(true)} className="bg-brown text-white px-3 py-2 rounded-full mb-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2">
             <FontAwesomeIcon icon={faKey} />
             <span>Cambiar Contraseña</span>
           </button>
-          <button
-            onClick={logout}
-            className="bg-red-700 text-white px-3 py-2 rounded-full mb-4 hover:bg-red-800 transition duration-200 flex items-center space-x-2"
-          >
+          <button onClick={logout} className="bg-red-700 text-white px-3 py-2 rounded-full mb-4 hover:bg-red-800 transition duration-200 flex items-center space-x-2">
             <FontAwesomeIcon icon={faSignOutAlt} />
             <span>Cerrar Sesión</span>
           </button>
-          <button
-            onClick={handleDeleteAccount}
-            className="bg-red-900 text-white px-3 py-2 rounded-full hover:bg-red-950 transition duration-200 flex items-center space-x-2"
-          >
+          <button onClick={handleDeleteAccount} className="bg-red-900 text-white px-3 py-2 rounded-full hover:bg-red-950 transition duration-200 flex items-center space-x-2">
             <FontAwesomeIcon icon={faTrashAlt} />
             <span>Borrar Cuenta</span>
           </button>
@@ -154,7 +156,9 @@ const MyProfile = () => {
                 key={preference.name}
                 onClick={() => handlePreferenceChange(preference.name)}
                 className={`flex items-center px-4 py-2 rounded-full space-x-2 ${
-                  user?.restricciones?.includes(preference.label) ? preference.color : preference.inactiveColor
+                  preferences[preference.name]
+                    ? `${preference.color} border-2 border-black`
+                    : 'bg-gray-200 text-gray-600'
                 }`}
               >
                 <FontAwesomeIcon icon={preference.icon} />
@@ -162,10 +166,7 @@ const MyProfile = () => {
               </button>
             ))}
           </div>
-          <button
-            onClick={confirmPreferences}
-            className="bg-brown text-white px-4 py-2 rounded-full mt-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2"
-          >
+          <button onClick={confirmPreferences} className="bg-brown text-white px-4 py-2 rounded-full mt-4 hover:bg-brown-900 transition duration-200 flex items-center space-x-2">
             <span>Confirmar Preferencias</span>
           </button>
         </div>
@@ -174,8 +175,15 @@ const MyProfile = () => {
       {/* Popup de cambio de contraseña */}
       {showPasswordPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg">
+          <div className="bg-white p-6 w-64 rounded shadow-lg">
             <h3 className="text-xl font-semibold mb-4">Cambiar Contraseña</h3>
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Contraseña Actual"
+            />
             <input
               type="password"
               value={newPassword}
@@ -183,16 +191,17 @@ const MyProfile = () => {
               className="w-full p-2 border border-gray-300 rounded mb-4"
               placeholder="Nueva Contraseña"
             />
-            <button
-              onClick={handlePasswordChange}
-              className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-900 transition duration-200"
-            >
+            <input
+              type="password"
+              value={confirmNewPassword}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded mb-4"
+              placeholder="Repetir Nueva Contraseña"
+            />
+            <button onClick={handlePasswordChange} className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-900 transition duration-200">
               Confirmar
             </button>
-            <button
-              onClick={() => setShowPasswordPopup(false)}
-              className="text-red-600 px-4 py-2 mt-2"
-            >
+            <button onClick={() => setShowPasswordPopup(false)} className="text-red-600 px-4 py-2 mt-2">
               Cancelar
             </button>
           </div>
@@ -211,16 +220,10 @@ const MyProfile = () => {
               className="w-full p-2 border border-gray-300 rounded mb-4"
               placeholder="Nuevo Nombre"
             />
-            <button
-              onClick={handleNameChange}
-              className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-900 transition duration-200"
-            >
+            <button onClick={handleNameChange} className="bg-brown text-white px-4 py-2 rounded-full hover:bg-brown-900 transition duration-200">
               Confirmar
             </button>
-            <button
-              onClick={() => setShowNamePopup(false)}
-              className="text-red-600 px-4 py-2 mt-2"
-            >
+            <button onClick={() => setShowNamePopup(false)} className="text-red-600 px-4 py-2 mt-2">
               Cancelar
             </button>
           </div>
