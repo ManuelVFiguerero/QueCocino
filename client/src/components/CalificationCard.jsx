@@ -1,14 +1,12 @@
-// CalificationCard.jsx
-
 import React, { useState } from 'react';
 import Rating from 'react-rating-stars-component';
-import { agregarCalificacion } from '../api'; // Importa la función
-import { useAuth } from './AuthContext'; // Para obtener el ID del usuario autenticado
+import { agregarCalificacion } from '../api'; 
+import { useAuth } from './AuthContext';
 
 const CalificationCard = ({ onSubmit, recipeId }) => {
     const [rating, setRating] = useState(0); 
     const [description, setDescription] = useState('');
-    const { user } = useAuth(); // Accede al ID del usuario
+    const { user } = useAuth(); 
 
     const handleRatingChange = (newRating) => {
         setRating(newRating);
@@ -25,9 +23,9 @@ const CalificationCard = ({ onSubmit, recipeId }) => {
         }
 
         try {
-            await agregarCalificacion(user._id, recipeId, rating, description); // Llama a la función
+            await agregarCalificacion(user._id, recipeId, rating, description || null);
             alert('Calificación enviada con éxito');
-            onSubmit({ rating, description }); // Llama a la función onSubmit
+            onSubmit({ rating, description });
         } catch (error) {
             alert('Error al enviar la calificación.');
             console.error(error);
@@ -38,6 +36,7 @@ const CalificationCard = ({ onSubmit, recipeId }) => {
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-auto">
             <h2 className="text-xl font-semibold mb-4">Calificar receta</h2>
 
+            {/* Componente de estrellas de calificación */}
             <Rating
                 count={5}
                 size={30}
@@ -47,6 +46,7 @@ const CalificationCard = ({ onSubmit, recipeId }) => {
                 onChange={handleRatingChange}
             />
 
+            {/* Área de texto para el comentario */}
             <textarea
                 placeholder="Agrega un comentario sobre la receta"
                 value={description}
@@ -55,6 +55,7 @@ const CalificationCard = ({ onSubmit, recipeId }) => {
                 rows="4"
             />
 
+            {/* Botón para enviar la calificación */}
             <button
                 onClick={handleSubmit}
                 className="bg-brown text-white px-4 py-2 mt-4 rounded-full hover:bg-brown-700 transition duration-200"

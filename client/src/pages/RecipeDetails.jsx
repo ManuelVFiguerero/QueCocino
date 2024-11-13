@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
 import CalificationCard from '../components/CalificationCard';
-import { FaLeaf, FaBreadSlice, FaTint, FaCarrot, FaFireAlt, FaStar } from 'react-icons/fa'; // Importación de icono de estrella
-import { agregarAFavoritos } from '../api'; // Importa la función para agregar a favoritos
-import { useAuth } from '../components/AuthContext'; // Para obtener el ID del usuario autenticado
+import { FaLeaf, FaBreadSlice, FaTint, FaCarrot, FaFireAlt, FaStar } from 'react-icons/fa'; 
+import { agregarAFavoritos } from '../api';
+import { useAuth } from '../components/AuthContext';
 
 const RecipeDetails = () => {
     const location = useLocation();
@@ -14,10 +14,9 @@ const RecipeDetails = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Definimos las imágenes con una imagen de respaldo
-    const images = recipe?.image && recipe.image.length > 0 
-        ? recipe.image 
-        : ['ruta_de_imagen_por_defecto.png']; // Imagen de respaldo
+    const images = recipe?.imagen && recipe.imagen.length > 0 
+        ? recipe.imagen 
+        : ['ruta_de_imagen_por_defecto.png'];
 
     const handleGuardarReceta = async () => {
         if (!isAuthenticated || !user) {
@@ -41,10 +40,6 @@ const RecipeDetails = () => {
             setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
         }
     };
-
-    if (!recipe) {
-        return <p>No se encontró la receta.</p>;
-    }
 
     const getRestrictionStyle = (restriccion) => {
         switch (restriccion.toLowerCase()) {
@@ -93,6 +88,10 @@ const RecipeDetails = () => {
         }
     };
 
+    if (!recipe) {
+        return <p>No se encontró la receta.</p>;
+    }
+
     return (
         <div className="flex flex-col lg:flex-row items-center justify-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-brown-200 lg:px-8">
             <button 
@@ -110,7 +109,7 @@ const RecipeDetails = () => {
                             {recipe.promedioCalificacion.toFixed(1)} <FaStar className="ml-1" />
                         </>
                     ) : (
-                        <span>S/N</span> // Si no hay calificación, muestra "S/N"
+                        <span>S/N</span> 
                     )}
                 </div>
 
@@ -211,8 +210,3 @@ const RecipeDetails = () => {
 };
 
 export default RecipeDetails;
-
-
-
-
-

@@ -6,16 +6,14 @@ import { obtenerRecetasFavoritas } from '../api';
 
 const FavRecipes = () => {
     const { user } = useAuth();
-    const [favoriteRecipes, setFavoriteRecipes] = useState([]); // Estado para las recetas favoritas
-    const [recipesToShow, setRecipesToShow] = useState(15); // Estado para la cantidad de recetas a cargar
+    const [favoriteRecipes, setFavoriteRecipes] = useState([]); 
+    const [recipesToShow, setRecipesToShow] = useState(15); 
 
     useEffect(() => {
         const fetchFavoriteRecipes = async () => {
             try {
-                // Verifica que el usuario esté en sesión y obtén sus recetas favoritas
                 if (user && user._id) {
                     const recetasFavoritas = await obtenerRecetasFavoritas(user._id);
-                    // Mostrar solo las primeras `recipesToShow` recetas al cargar la página
                     setFavoriteRecipes(recetasFavoritas.slice(0, recipesToShow));
                 }
             } catch (error) {
@@ -26,12 +24,10 @@ const FavRecipes = () => {
         fetchFavoriteRecipes();
     }, [user, recipesToShow]);
 
-    // Función para cargar más recetas al llegar al final de la página
     const loadMoreRecipes = () => {
-        setRecipesToShow((prev) => prev + 15); // Aumenta el número de recetas mostradas en 15
+        setRecipesToShow((prev) => prev + 15); 
     };
 
-    // Detectar el scroll al fondo de la página
     useEffect(() => {
         const handleScroll = () => {
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
@@ -45,7 +41,6 @@ const FavRecipes = () => {
         };
     }, []);
 
-    // Función para manejar la eliminación de recetas de la lista de favoritos
     const handleDeleteFavorite = (recipeId) => {
         setFavoriteRecipes((prevRecipes) => prevRecipes.filter(recipe => recipe._id !== recipeId));
     };
@@ -62,7 +57,7 @@ const FavRecipes = () => {
                             key={index} 
                             recipe={recipe} 
                             isFavRecipes={true} 
-                            onDelete={handleDeleteFavorite} // Pasa la función handleDeleteFavorite como onDelete
+                            onDelete={handleDeleteFavorite} 
                         />
                     ))}
                 </div>

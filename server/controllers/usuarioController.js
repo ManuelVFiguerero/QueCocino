@@ -57,15 +57,14 @@ class UsuarioController {
     
             console.log("Inicio de sesión exitoso para el usuario:", usuario.email);
     
-            // Devuelve también el campo restricciones en la respuesta
             res.status(200).json({ 
                 message: 'Inicio de sesión exitoso', 
                 usuario: { 
                     _id: usuario._id, 
                     email: usuario.email, 
-                    restricciones: usuario.restricciones // Incluye las restricciones aquí
+                    restricciones: usuario.restricciones 
                 }, 
-                token: "token_generado_aqui" // Incluye un token si es necesario
+                token: "token_generado_aqui" 
             });
         } catch (error) {
             console.log("Error en el inicio de sesión:", error.message);
@@ -84,19 +83,16 @@ class UsuarioController {
             }
     
             if (contrasenaActual && contrasenaNueva) {
-                // Obtener el usuario para verificar la contraseña actual
                 const usuario = await Usuario.findById(idUsuario);
                 if (!usuario) {
                     return res.status(404).json({ error: 'Usuario no encontrado' });
                 }
     
-                // Verificar la contraseña actual
                 const contrasenaValida = await bcrypt.compare(contrasenaActual, usuario.contrasena);
                 if (!contrasenaValida) {
                     return res.status(401).json({ error: 'La contraseña actual es incorrecta' });
                 }
     
-                // Hashear la nueva contraseña
                 const hashedPassword = await bcrypt.hash(contrasenaNueva, 10);
                 actualizaciones.contrasena = hashedPassword;
             }
@@ -121,7 +117,6 @@ class UsuarioController {
         }
     }    
 
-    // Obtener recetas favoritas de un usuario
     async obtenerRecetasFavoritas(req, res) {
         try {
             const { idUsuario } = req.params;
@@ -138,7 +133,6 @@ class UsuarioController {
         }
     }
 
-    // Método para agregar receta a favoritos
     async agregarAFavoritos(req, res) {
         try {
             const { idUsuario, idReceta } = req.body;
@@ -192,28 +186,22 @@ class UsuarioController {
         try {
             const { idUsuario } = req.params;
     
-            // Buscar el usuario antes de eliminarlo para obtener sus recetasPropias
             const usuario = await Usuario.findById(idUsuario);
             if (!usuario) {
                 return res.status(404).json({ error: 'Usuario no encontrado' });
             }
     
-            // Eliminar las recetas y sus calificaciones, y remover de favoritos de otros usuarios
             for (const recetaId of usuario.recetasPropias) {
-                // Eliminar las calificaciones vinculadas a la receta
                 await Calificacion.deleteMany({ idReceta: recetaId });
     
-                // Eliminar la receta de la lista de favoritos de otros usuarios
                 await Usuario.updateMany(
                     { recetasFavoritas: recetaId },
                     { $pull: { recetasFavoritas: recetaId } }
                 );
     
-                // Eliminar la receta
                 await Receta.findByIdAndDelete(recetaId);
             }
     
-            // Eliminar el usuario después de eliminar sus recetas y calificaciones
             await Usuario.findByIdAndDelete(idUsuario);
     
             console.log(`Usuario con ID ${idUsuario}, sus recetas, calificaciones asociadas, y referencias en favoritos han sido eliminados.`);
@@ -228,7 +216,7 @@ class UsuarioController {
         try {
             const { idUsuario } = req.params;
             const usuario = await Usuario.findById(idUsuario, 'nombre email restricciones')
-                .populate('recetasPropias'); // Incluye los detalles completos de recetasPropias
+                .populate('recetasPropias'); 
 
             if (!usuario) {
                 return res.status(404).json({ error: 'Usuario no encontrado' });

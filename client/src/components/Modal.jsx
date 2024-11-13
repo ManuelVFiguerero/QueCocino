@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Modal = ({ children, isOpen, onClose }) => {
-    if (!isOpen) return null; // Si el modal no está abierto, no mostrar nada.
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

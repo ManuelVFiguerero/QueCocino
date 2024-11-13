@@ -1,6 +1,5 @@
-// server.js
 const express = require('express');
-const cors = require('cors'); // Importar CORS
+const cors = require('cors'); 
 const connectDB = require('./config/db');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const recetaRoutes = require('./routes/recetaRoutes');
@@ -9,12 +8,11 @@ const calificacionRoutes = require('./routes/calificacionRoutes');
 require('dotenv').config();
 
 const app = express();
-connectDB(); // Conectar a MongoDB
+connectDB();
 
-app.use(cors()); // Habilitar CORS para todas las solicitudes
-app.use(express.json()); // Middleware para parsear JSON
+app.use(cors());
+app.use(express.json()); 
 
-// Rutas
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/recetas', recetaRoutes);
 app.use('/api/calificaciones', calificacionRoutes);

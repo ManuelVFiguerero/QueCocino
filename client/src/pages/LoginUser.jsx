@@ -14,7 +14,7 @@ const LoginUser = () => {
   const handleLogin = async () => {
     try {
       await login(email, contrasena);
-      navigate('/'); // Redirige al home o donde desees
+      navigate('/'); 
     } catch (error) {
       console.error('Error en inicio de sesión:', error);
       alert('Error al iniciar sesión. Verifica tus credenciales.');

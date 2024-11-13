@@ -4,9 +4,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const EditRecipe = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { recipe } = location.state || {};  // Obtenemos 'recipe' del state pasado al hacer navigate
+    const { recipe } = location.state || {}; 
     const [tituloReceta, setTituloReceta] = useState('');
-    const [autor] = useState('Nombre Fijo');  // Autocompletado fijo
+    const [autor] = useState('Nombre Fijo');  
     const [ingredientes, setIngredientes] = useState([]);
     const [ingredienteActual, setIngredienteActual] = useState('');
     const [instrucciones, setInstrucciones] = useState('');
@@ -14,7 +14,6 @@ const EditRecipe = () => {
     const [restriccionActual, setRestriccionActual] = useState('');
     const [imagenes, setImagenes] = useState([]);
 
-    // Cargar los datos de recipe cuando el componente se monta
     useEffect(() => {
         if (recipe) {
             setTituloReceta(recipe.tituloReceta || '');
@@ -25,7 +24,6 @@ const EditRecipe = () => {
         }
     }, [recipe]);
 
-    // Función para agregar ingredientes
     const agregarIngrediente = () => {
         if (ingredienteActual) {
             setIngredientes([...ingredientes, ingredienteActual]);
@@ -33,17 +31,15 @@ const EditRecipe = () => {
         }
     };
 
-// Función para eliminar ingrediente
 const eliminarIngrediente = (index) => {
     setIngredientes((prevIngredientes) => {
         const nuevosIngredientes = prevIngredientes.filter((_, i) => i !== index);
-        console.log('Ingredientes restantes:', nuevosIngredientes);  // Verifica los ingredientes restantes
+        console.log('Ingredientes restantes:', nuevosIngredientes); 
         return nuevosIngredientes;
     });
 };
 
 
-    // Función para agregar restricciones
     const agregarRestriccion = () => {
         if (restriccionActual) {
             setRestricciones([...restricciones, restriccionActual]);
@@ -51,12 +47,10 @@ const eliminarIngrediente = (index) => {
         }
     };
 
-    // Función para eliminar restricción
     const eliminarRestriccion = (index) => {
         setRestricciones(restricciones.filter((_, i) => i !== index));
     };
 
-    // Función para manejar la subida de imágenes
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         if (imagenes.length + files.length <= 3) {
@@ -66,17 +60,14 @@ const eliminarIngrediente = (index) => {
         }
     };
 
-    // Validación y publicación
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Validar que los campos requeridos no estén vacíos
         if (!tituloReceta || !ingredientes.length || !instrucciones || !imagenes.length) {
             alert('Por favor, completa todos los campos requeridos.');
             return;
         }
 
-        // Simular la actualización de la receta
         const recetaEditada = {
             tituloReceta,
             autor,
@@ -87,7 +78,7 @@ const eliminarIngrediente = (index) => {
         };
 
         console.log('Receta actualizada:', recetaEditada);
-        navigate('/myrecipes');  // Redirige a /myrecipes después de confirmar los cambios
+        navigate('/myrecipes');  
     };
 
     return (
@@ -154,7 +145,7 @@ const eliminarIngrediente = (index) => {
                                 <li key={index} className="flex justify-between items-center">
                                     <span>{ingrediente}</span>
                                     <button 
-                                        type="button"  // Cambia a 'button' para evitar el envío del formulario
+                                        type="button" 
                                         onClick={() => eliminarIngrediente(index)} 
                                         className="text-red-500 hover:text-red-700"
                                     >

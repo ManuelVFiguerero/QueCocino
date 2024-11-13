@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
 import CalificationCard from '../components/CalificationCard';
-import { FaLeaf, FaBreadSlice, FaTint, FaCarrot, FaFireAlt, FaStar } from 'react-icons/fa'; // Importación de icono de estrella
-import { useAuth } from '../components/AuthContext'; // Para obtener el ID del usuario autenticado
+import { FaLeaf, FaBreadSlice, FaTint, FaCarrot, FaFireAlt, FaStar } from 'react-icons/fa'; 
+import { useAuth } from '../components/AuthContext'; 
 
 const RecipeDetailsFav = () => {
     const location = useLocation();
@@ -13,10 +13,9 @@ const RecipeDetailsFav = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Definimos las imágenes con una imagen de respaldo
     const images = recipe?.image && recipe.image.length > 0 
         ? recipe.image 
-        : ['ruta_de_imagen_por_defecto.png']; // Imagen de respaldo
+        : ['ruta_de_imagen_por_defecto.png']; 
 
     const changeImage = (direction) => {
         if (direction === 'next') {
@@ -94,7 +93,7 @@ const RecipeDetailsFav = () => {
                             {recipe.promedioCalificacion.toFixed(1)} <FaStar className="ml-1" />
                         </>
                     ) : (
-                        <span>S/N</span> // Si no hay calificación, muestra "S/N"
+                        <span>S/N</span> 
                     )}
                 </div>
 

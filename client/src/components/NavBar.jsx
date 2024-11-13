@@ -3,12 +3,12 @@ import { slide as Menu } from 'react-burger-menu';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faUserPlus, faInfoCircle, faHome, faBars, faSearch, faPlus, faHeart, faBook, faUserCircle, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from './AuthContext';  // Importamos el contexto de autenticación
+import { useAuth } from './AuthContext';  
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const { isAuthenticated, logout } = useAuth();  // Obtenemos el estado de autenticación
+  const { isAuthenticated, logout } = useAuth(); 
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);

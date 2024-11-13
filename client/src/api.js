@@ -33,20 +33,6 @@ export const registrarUsuario = async (usuarioData) => {
   }
 };
 
-export const agregarCalificacion = async (idUsuario, idReceta, valor, comentario) => {
-  try {
-    const response = await axios.post(`${API_URL}/calificaciones/agregar/${idReceta}`, {
-      idUsuario,
-      valor,
-      comentario,
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error al agregar calificación:', error);
-    throw error;
-  }
-};
-
 export const agregarReceta = async (formData) => {
   try {
     const response = await axios.post(`${API_URL}/recetas/agregar`, formData);
@@ -172,11 +158,25 @@ export const eliminarReceta = async (idReceta) => {
   }
 };
 
+// Función para agregar una calificación
+export const agregarCalificacion = async (idUsuario, idReceta, valor, comentario = null) => {
+  try {
+    const response = await axios.post(`${API_URL}/calificaciones/agregar/${idReceta}`, {
+      idUsuario,
+      valor,
+      comentario,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar calificación:', error);
+    throw error;
+  }
+};
+
 export default {
   iniciarSesion,
   registrarUsuario,
   agregarAFavoritos,
-  agregarCalificacion,
   agregarReceta,
   obtenerCategorias,
   buscarRecetas,
@@ -188,4 +188,5 @@ export default {
   obtenerRecetaPorId,
   eliminarDeFavoritos,
   eliminarReceta,
+  agregarCalificacion,
 };

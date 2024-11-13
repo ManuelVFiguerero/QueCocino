@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import NavBar from './components/NavBar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import TestPage from './pages/TestPage';
 import RegisterUser from './pages/RegisterUser';
@@ -39,6 +40,7 @@ const App = () => {
                     <Route path="/createrecipe" element={<PrivateRoute><CreateRecipe /></PrivateRoute>} />
                     <Route path="/editrecipe" element={<PrivateRoute><EditRecipe /></PrivateRoute>} />
                 </Routes>
+                    <Footer />
             </BrowserRouter>
         </AuthProvider>
     );

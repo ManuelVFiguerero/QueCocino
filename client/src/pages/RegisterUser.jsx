@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import logo from '../assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
-import { registrarUsuario } from '../api'; // Importar la función del archivo API
+import { registrarUsuario } from '../api'; 
 import { useNavigate } from 'react-router-dom';
 
 const RegisterUser = () => {
@@ -14,7 +14,7 @@ const RegisterUser = () => {
     const navigate = useNavigate();
 
     const handleRegister = async () => {
-        console.log("Inicio del proceso de registro");  // Log para verificar si el evento se dispara
+        console.log("Inicio del proceso de registro");  
     
         try {
             const usuarioData = {
@@ -25,20 +25,17 @@ const RegisterUser = () => {
                 confirmarContrasena
             };
     
-            console.log("Datos de usuario a enviar:", usuarioData);  // Log para ver los datos antes de enviarlos
+            console.log("Datos de usuario a enviar:", usuarioData);  
     
-            // Llama a la función para registrar el usuario
             const response = await registrarUsuario(usuarioData);
-            console.log("Respuesta del servidor al registrar usuario:", response);  // Log para ver la respuesta del servidor
+            console.log("Respuesta del servidor al registrar usuario:", response);  
     
-            // Redirige al login después del registro exitoso
             navigate('/login');
         } catch (error) {
             console.error('Error al registrar usuario:', error);
     
-            // Si el error tiene una respuesta (como un mensaje de error del backend)
             if (error.response) {
-                console.log("Error del servidor:", error.response.data);  // Log para el mensaje de error desde el backend
+                console.log("Error del servidor:", error.response.data); 
             }
     
             alert('Hubo un problema al registrar el usuario. Inténtalo de nuevo.');

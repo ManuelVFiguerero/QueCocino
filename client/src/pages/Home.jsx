@@ -1,34 +1,25 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import SearchBar from '../components/SearchBar';
-import RecipeCard from '../components/RecipeCard';
 import logo from '../assets/logo.png';
 import DefaultGrid from '../components/DefaultGrid';
 import SearchGrid from '../components/SearchGrid';
-import { buscarRecetas } from '../api'; // Importamos la función de búsqueda en el backend
+import { buscarRecetas } from '../api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeaf, faBreadSlice, faTint, faCarrot, faFire, faBan } from '@fortawesome/free-solid-svg-icons';
-import { obtenerRecetaPorId } from '../api'; // Asegúrate de importar correctamente la función
+import { obtenerRecetaPorId } from '../api';
 
 const Home = () => {
     const [ingredientes, setIngredientes] = useState([]);
     const [showFilters, setShowFilters] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [searchResults, setSearchResults] = useState(null);
-    const [showDefaultRecipes, setShowDefaultRecipes] = useState(true); // Nuevo estado para mostrar recetas hardcoded
+    const [showDefaultRecipes, setShowDefaultRecipes] = useState(true);
     const [recetas, setRecetas] = useState([]);
 
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
     const navigate = useNavigate();
-
-    const toggleFilter = (filter) => {
-        if (selectedFilters.includes(filter)) {
-            setSelectedFilters(selectedFilters.filter((f) => f !== filter));
-        } else {
-            setSelectedFilters([...selectedFilters, filter]);
-        }
-    };
 
     const filterOptions = [
         { name: 'Apto Vegano', icon: faLeaf, color: 'bg-green-200 text-green-800' },
@@ -39,22 +30,24 @@ const Home = () => {
         { name: 'Sin Frutos Secos', icon: faBan, color: 'bg-brown-200 text-brown-800' },
     ];
 
-    // IDs de las recetas predeterminadas
     const recetaIds = [
-        '6732669926dfc08eb5ec2ef7',
+        '672bf0d53e252c4f26d3c2ef',
+        '6732b83026dfc08eb5ec2f4e',
+        '6732b8ae26dfc08eb5ec2f51',
+        '6732b8c026dfc08eb5ec2f54',
+        '6732b92526dfc08eb5ec2f5a',
+        '6732b93026dfc08eb5ec2f5d',
         '672be74ff49fce1f46422a2b',
         '672bdfb6f49fce1f46422a24'
     ];
 
-    // Cargar las recetas por sus IDs al montar el componente
     useEffect(() => {
         const cargarRecetas = async () => {
             try {
-                // Utilizar Promise.all para obtener todas las recetas en paralelo
                 const recetasData = await Promise.all(
                     recetaIds.map(id => obtenerRecetaPorId(id))
                 );
-                setRecetas(recetasData); // Guardar los datos completos de las recetas en el estado
+                setRecetas(recetasData);
             } catch (error) {
                 console.error('Error al cargar las recetas:', error);
             }
@@ -62,6 +55,23 @@ const Home = () => {
 
         cargarRecetas();
     }, []);
+
+    useEffect(() => {
+        if (user && user.restricciones) {
+            const initialFilters = filterOptions
+                .filter(option => user.restricciones.some(r => r.trim().toLowerCase() === option.name.toLowerCase()))
+                .map(option => option.name);
+            setSelectedFilters(initialFilters);
+        }
+    }, [user]);
+
+    const toggleFilter = (filter) => {
+        if (selectedFilters.includes(filter)) {
+            setSelectedFilters(selectedFilters.filter((f) => f !== filter));
+        } else {
+            setSelectedFilters([...selectedFilters, filter]);
+        }
+    };
 
     const addIngredient = (ingredient) => {
         if (ingredient && !ingredientes.includes(ingredient)) {
@@ -79,14 +89,15 @@ const Home = () => {
             return;
         }
 
-        console.log("Ejecutando búsqueda con ingredientes:", ingredientes);
+        const lowerCaseIngredients = ingredientes.map(ing => ing.toLowerCase());
+        console.log("Ejecutando búsqueda con ingredientes:", lowerCaseIngredients);
         console.log("Ejecutando búsqueda con restricciones:", selectedFilters);
 
         try {
-            const results = await buscarRecetas(ingredientes, selectedFilters);
+            const results = await buscarRecetas(lowerCaseIngredients, selectedFilters);
             console.log("Resultados de búsqueda:", results);
             setSearchResults(results);
-            setShowDefaultRecipes(false); // Ocultar recetas hardcoded
+            setShowDefaultRecipes(false);
         } catch (error) {
             console.error("Error al buscar recetas:", error);
         }

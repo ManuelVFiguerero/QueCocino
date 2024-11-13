@@ -1,34 +1,28 @@
-// SearchGrid.js
 import React, { useState, useEffect } from 'react';
-import RecipeCard from './RecipeCard'; // Asegúrate de tener este componente
+import RecipeCard from './RecipeCard'; 
 
 const SearchGrid = ({ allRecetas }) => {
-    const [visibleRecipes, setVisibleRecipes] = useState([]); // Estado para las recetas visibles
-    const [recipesToShow, setRecipesToShow] = useState(15); // Estado para la cantidad de recetas a cargar
+    const [visibleRecipes, setVisibleRecipes] = useState([]); 
+    const [recipesToShow, setRecipesToShow] = useState(15); 
 
     useEffect(() => {
-        // Al iniciar, carga las primeras 15 recetas o menos si no hay tantas
         const initialRecipes = allRecetas.slice(0, recipesToShow);
         setVisibleRecipes(initialRecipes);
     }, [recipesToShow, allRecetas]);
 
-    // Función para cargar más recetas
     const loadMoreRecipes = () => {
-        setRecipesToShow((prev) => prev + 15); // Aumenta el número de recetas mostradas en 15
+        setRecipesToShow((prev) => prev + 15); 
     };
 
-    // Detectar el scroll al fondo de la página
     useEffect(() => {
         const handleScroll = () => {
-            // Verificar si el usuario ha llegado al fondo de la página
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                loadMoreRecipes(); // Cargar más recetas cuando llega al final del scroll
+                loadMoreRecipes(); 
             }
         };
 
         window.addEventListener('scroll', handleScroll);
 
-        // Cleanup del event listener cuando el componente se desmonte
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };

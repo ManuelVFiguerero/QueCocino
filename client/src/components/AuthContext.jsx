@@ -3,10 +3,8 @@ import { iniciarSesion, setAuthToken, renovarToken } from '../api';
 
 const AuthContext = createContext();
 
-// Hook personalizado para usar el contexto
 export const useAuth = () => useContext(AuthContext);
 
-// Proveedor de contexto para envolver la aplicación
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
@@ -21,13 +19,12 @@ export const AuthProvider = ({ children }) => {
             setUser({
                 _id: response.usuario._id,
                 email: response.usuario.email,
-                restricciones: response.usuario.restricciones || [] // Incluye restricciones directamente
+                restricciones: response.usuario.restricciones || []
             });
 
-            // Guardar token y tiempo de expiración
             localStorage.setItem('token', response.token);
             localStorage.setItem('userID', response.usuario._id);
-            const expirationTime = Date.now() + 60 * 60 * 1000; // 1 hora de expiración, ajusta según sea necesario
+            const expirationTime = Date.now() + 60 * 60 * 1000; 
             localStorage.setItem('tokenExpiration', expirationTime);
             setTokenExpiration(expirationTime);
             setAuthToken(response.token);
@@ -50,7 +47,7 @@ export const AuthProvider = ({ children }) => {
         const expiration = localStorage.getItem('tokenExpiration');
         if (expiration && Date.now() > expiration) {
             console.log('Token expirado. Renovando...');
-            await renovarToken(); // Asegúrate de tener un endpoint para renovar el token en tu API
+            await renovarToken(); 
         }
     };
 
@@ -66,7 +63,7 @@ export const AuthProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error al renovar el token:', error);
-            logout(); // Cierra sesión si no se puede renovar el token
+            logout(); 
         }
     };
 
@@ -79,18 +76,16 @@ export const AuthProvider = ({ children }) => {
                 setAuthToken(token);
                 setIsAuthenticated(true);
                 setTokenExpiration(expiration);
-                // Podrías aquí obtener información del usuario si es necesario
             } else {
-                logout(); // Cierra sesión si el token ha expirado
+                logout();
             }
         }
     }, []);
 
-    // Monitorea el tiempo restante del token y renueva antes de expirar
     useEffect(() => {
         if (tokenExpiration) {
             const timeLeft = tokenExpiration - Date.now();
-            const timeoutId = setTimeout(checkTokenExpiration, timeLeft - 5000); // Renueva 5 segundos antes de expirar
+            const timeoutId = setTimeout(checkTokenExpiration, timeLeft - 5000);
             return () => clearTimeout(timeoutId);
         }
     }, [tokenExpiration]);

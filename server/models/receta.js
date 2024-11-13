@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const recetaSchema = new Schema({
     nombre: { type: String, required: true },
     ingredientes: [{ type: String, required: true }],
-    categorias: [{ type: String, required: true }], // Guardar nombres de las categorías como strings
+    categorias: [{ type: String, required: true }],
     calificaciones: [{ type: Schema.Types.ObjectId, ref: 'Calificacion' }],
     instrucciones: { type: String, required: true },
     imagen: [{ type: String, required: true }],

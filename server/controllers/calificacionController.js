@@ -34,7 +34,6 @@ class CalificacionController {
         try {
             const { idCalificacion } = req.params;
 
-            // Buscar la calificación para obtener el idReceta
             const calificacion = await Calificacion.findById(idCalificacion);
             if (!calificacion) {
                 return res.status(404).json({ error: 'Calificación no encontrada' });
@@ -42,13 +41,10 @@ class CalificacionController {
 
             const idReceta = calificacion.idReceta;
 
-            // Eliminar la calificación de la lista de calificaciones de la receta
             await Receta.findByIdAndUpdate(idReceta, { $pull: { calificaciones: idCalificacion } });
 
-            // Eliminar la calificación de la base de datos
             await Calificacion.findByIdAndDelete(idCalificacion);
 
-            // Actualizar el promedio de la receta
             await CalificacionController.actualizarPromedioCalificacion(idReceta);
 
             res.status(200).json({ message: 'Calificación eliminada correctamente' });

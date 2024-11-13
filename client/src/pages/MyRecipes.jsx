@@ -6,17 +6,17 @@ import { obtenerUsuario } from '../api';
 
 const MyRecipes = () => {
     const { user } = useAuth();
-    const [visibleRecipes, setVisibleRecipes] = useState([]); // Estado para las recetas visibles
-    const [recipesToShow, setRecipesToShow] = useState(15); // Estado para la cantidad de recetas a cargar
+    const [visibleRecipes, setVisibleRecipes] = useState([]); 
+    const [recipesToShow, setRecipesToShow] = useState(15); 
 
     useEffect(() => {
         const fetchUserRecipes = async () => {
             try {
                 if (user && user._id) {
                     const usuarioData = await obtenerUsuario(user._id);
-                    console.log("Datos del usuario obtenidos:", usuarioData); // Verifica que `recetasPropias` esté en los datos
+                    console.log("Datos del usuario obtenidos:", usuarioData); 
     
-                    setVisibleRecipes(usuarioData.recetasPropias.slice(0, recipesToShow)); // Usa directamente recetasPropias
+                    setVisibleRecipes(usuarioData.recetasPropias.slice(0, recipesToShow)); 
                 }
             } catch (error) {
                 console.error("Error al obtener recetas del usuario:", error);
@@ -26,16 +26,14 @@ const MyRecipes = () => {
         fetchUserRecipes();
     }, [user, recipesToShow]);     
 
-    // Función para cargar más recetas
     const loadMoreRecipes = () => {
-        setRecipesToShow((prev) => prev + 15); // Aumenta el número de recetas mostradas en 15
+        setRecipesToShow((prev) => prev + 15); 
     };
 
-    // Detectar el scroll al fondo de la página
     useEffect(() => {
         const handleScroll = () => {
             if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                loadMoreRecipes(); // Cargar más recetas cuando llega al final del scroll
+                loadMoreRecipes();
             }
         };
 
@@ -46,7 +44,6 @@ const MyRecipes = () => {
         };
     }, []);
 
-    // Función para manejar la eliminación de recetas de la lista visible
     const handleDeleteRecipe = (recipeId) => {
         setVisibleRecipes((prevRecipes) => prevRecipes.filter(recipe => recipe._id !== recipeId));
     };
@@ -64,7 +61,7 @@ const MyRecipes = () => {
                             key={index} 
                             recipe={recipe} 
                             isMyRecipes={true} 
-                            onDelete={handleDeleteRecipe} // Pasa la función handleDeleteRecipe como onDelete
+                            onDelete={handleDeleteRecipe} 
                         />
                     ))}
                 </div>

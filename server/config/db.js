@@ -1,6 +1,5 @@
-// config/db.js
 const mongoose = require('mongoose');
-require('dotenv').config(); // Cargar variables del archivo .env
+require('dotenv').config(); 
 
 const connectDB = async () => {
   try {
@@ -12,7 +11,7 @@ const connectDB = async () => {
     console.log(`MongoDB conectado: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Error conectando a MongoDB: ${error.message}`);
-    process.exit(1); // Detener la aplicación si hay un error
+    process.exit(1);
   }
 };
 
