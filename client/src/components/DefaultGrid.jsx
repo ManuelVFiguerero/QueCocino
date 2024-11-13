@@ -27,7 +27,7 @@ const DefaultGrid = ({ recetas }) => {
                     Recetas Argentinas
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    {recetas.slice(0, 3).map((recipe, index) => (
+                    {recetas.slice(4,7).map((recipe, index) => (
                         <RecipeCard key={index} recipe={recipe} />
                     ))}
                 </div>
@@ -40,7 +40,7 @@ const DefaultGrid = ({ recetas }) => {
                     Recetas Celíacas
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    {recetas.slice(0, 3).map((recipe, index) => (
+                    {recetas.slice(7, 10).map((recipe, index) => (
                         <RecipeCard key={index} recipe={recipe} />
                     ))}
                 </div>
