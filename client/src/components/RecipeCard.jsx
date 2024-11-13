@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { agregarAFavoritos, eliminarDeFavoritos, eliminarReceta } from '../api';
 import { useAuth } from '../components/AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelete }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -94,6 +96,17 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelet
             <p className="text-center mb-4 text-sm">{recipe.autor}</p>
             <p className="text-center mb-4 text-sm flex-grow">{recipe.descripcion}</p> 
 
+            {/* Calificación de la receta */}
+            <div className="absolute bottom-4 left-4 text-yellow-500 text-sm flex items-center">
+                {recipe.promedioCalificacion && recipe.promedioCalificacion > 0 ? (
+                    <>
+                        {recipe.promedioCalificacion.toFixed(1)} <FontAwesomeIcon icon={faStar} className="ml-1" />
+                    </>
+                ) : (
+                    <span>S/N</span>  // Si no hay calificación, muestra "S/N"
+                )}
+            </div>
+
             <div className="flex justify-end space-x-2 mt-auto">
                 {isMyRecipes ? (
                     <>
@@ -130,7 +143,7 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelet
                 )}
 
                 <Link 
-                    to="/recipedetails" 
+                    to={isFavRecipes ? "/recipedetailsfav" : "/recipedetails"} 
                     state={{ recipe }} 
                     className="bg-brown text-white text-xs px-3 py-1 rounded-full hover:bg-brown-700 transition duration-200"
                 >
@@ -142,3 +155,4 @@ const RecipeCard = ({ recipe, isMyRecipes = false, isFavRecipes = false, onDelet
 };
 
 export default RecipeCard;
+
